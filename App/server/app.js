@@ -1,14 +1,21 @@
 const express = require("express");
 const app = express();
-console.log(app);
+
+//importing routes
+const videosRoutes = require("./src/router/videoRoute.js");
+
 // Middleware to log requests
 app.use((req, res, next) => {
   console.log(`Request received for ${req.url}`);
   next();
 });
 
+app.use("/youtube", videosRoutes);
+
 // Route
 app.get("/", (req, res) => {
+  console.log(process.env.YOUTUBE_API_KEY);
+  console.log(process.env.CHANNEL_ID);
   res.send("server is serving ...!");
 });
 
@@ -19,4 +26,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-
