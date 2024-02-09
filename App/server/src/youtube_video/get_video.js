@@ -9,7 +9,7 @@ exports.getYoutubeVideo = async (req, res) => {
           part: "snippet",
           channelId: process.env.CHANNEL_ID,
           key: process.env.YOUTUBE_API_KEY,
-          maxResults: 50, // Fetch the latest 50 videos
+          maxResults: 5, // Fetch the latest 50 videos
           order: "date", // Sort by date (latest first)
         },
       },
@@ -66,6 +66,7 @@ exports.getYoutubeVideo = async (req, res) => {
     const validVideos = videosWithDetails.filter((video) => video !== null);
 
     res.json(validVideos);
+    console.log(validVideos);
   } catch (error) {
     console.error("Error fetching latest videos:", error.message);
     res.status(500).json({ error: "Error fetching latest videos" });

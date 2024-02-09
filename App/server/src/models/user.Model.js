@@ -55,10 +55,24 @@ const userSchema = new mongoose.Schema({
     minlength: [7, `Password must be at least 7 characters long.`],
     maxlength: [18, `Password must be at most 18 characters long.`],
   },
+  phone: {
+    type: Number,
+  },
+  location: {
+    type: String,
+  },
   userType: {
     type: String,
     enum: ["user", "member", "admin"],
     default: "user",
+  },
+  otp: {
+    type: Number,
+    default: null,
+  },
+  otpExpiration: {
+    type: Date,
+    default: null,
   },
   createdAt: {
     type: Date,
