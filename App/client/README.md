@@ -1,79 +1,103 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# React Native Animation
 
-# Getting Started
+This repository is a collection of results from the React Native Animation Tutorial on my YouTube Channel [Rakha Wibowo](https://www.youtube.com/@rakhawibowo) using :
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+- [React Native](https://reactnative.dev/)
+- [Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/docs/)
+- [Moti](https://moti.fyi/)
+- [Lottie](https://github.com/lottie-react-native/lottie-react-native)
+- [React Three Fiber](https://github.com/lottie-react-native/lottie-react-native)
 
-## Step 1: Start the Metro Server
+This project uses react-native-bars to make the Status Bar and Navigation Bar on Android transparent
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Version
 
-To start Metro, run the following command from the _root_ of your React Native project:
+The version used in this repository:
+
+- React Native v0.73.2
+- Reanimated v3.6.2
+- React Native Gesture Handler v2.14.1
+- Moti v0.27.2
+- Lottie v6.6.0
+- React Three Fiber v8.15.16
+- React Three Drei v9.97.0
+- Three.js v0.160.1
+- Skia v0.1.237
+- React Native Bars v2.4.3
+
+## Available Tutorials
+
+- [React Native Custom Switch Using Reanimated 2](https://youtu.be/qDI5SQAb0vI)
+- [React Native Custom Animated Check Box Component Using SVG and Reanimated 2](https://youtu.be/8aax8SU0F2w)
+- [React Native Custom Image Carousel with Pagination and Auto Play using Reanimated 2](https://youtu.be/1XDMJI93p0I)
+- [React Native Bottom Sheet with Back Drop from Scratch using Reanimated 2 and Gesture Handler](https://youtu.be/r_cng3a6K70)
+- [React Native Custom Range Slider using Reanimated 2](https://youtu.be/sZ0BDG9PAd4)
+- [React Native FlatList Grid or FlatList Columns With Reveal Animation Using Moti](https://youtu.be/wFHPaBugFsQ)
+- [React Native Onboarding Screen Using Reanimated 2](https://youtu.be/b9uLJJ3aNjU)
+- [React Native Custom Swipeable Toast From Scratch](https://youtu.be/M2v7vsHcjHk)
+- [React Native Stack Carousel](https://youtu.be/nmcsDXwUDlI)
+- [React Native Accordion](https://youtu.be/qjsNgjXxK24)
+- [React Native Floating Action Button](https://youtu.be/CSQLCAx-tG0)
+- [React Native Onboarding Screen ( Change Color ) Using Reanimated](https://youtu.be/E-y4lCQF6_I)
+- [React Native 3D Onboarding Screen Using Reanimated and React Three Fiber](https://youtu.be/zs-K4AMRoa0)
+- [React Native Scrollable Bottom Sheet with Back Drop using Reanimated and Gesture Handler](https://youtu.be/kWrC4i0DorE)
+- [React Native 3D Loading 3D Model Using React Three Fiber and Drei](https://youtu.be/O8q8H9c9XZ4)
+- [React Native 3D Character With Animation](https://youtu.be/SP0O5o9BJVA)
+- [React Native Shared Element Transition With Reanimated 3](https://youtu.be/fNIIaUUac7k)
+- [React Native Custom Drawer With Reanimated 3 and Gesture Handler From Scratch](https://youtu.be/bwHh-qTjU1g)
+- [React Native Animated Donut Chart using Reanimated 3 and Skia](https://youtu.be/Zgz1baxJslg)
+- [React Native Animated Circular Progress Bar With Reanimated 3 and Skia](https://youtu.be/Uohkd-cef8E)
+- [React Native Onboarding Screen (Masking) With Reanimated 3 and Skia](https://youtu.be/XYbVTgDym-U)
+- [React Native 3D Shop App UI With React Three Fiber - ThreeJs](https://youtu.be/quVWBfqwPBA)
+- [React Native Carousel With Pagination, Auto Play and Infinite Loop](https://youtu.be/iqBJ1021m0s)
+- [React Native Dark Mode Switch](https://youtu.be/18Gzlh_HTRw)
+- [React Native Animated Onboarding Screen (Inspired By Cuberto)](https://youtu.be/lcqS8uSpHLI)
+
+## Run Locally
+
+Clone the project
 
 ```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+git clone https://github.com/Rakha112/react-native-animation.git
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+Go to the project directory
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+cd react-native-animation
 ```
 
-### For iOS
+Install dependencies
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm install
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+For iOS
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+npx pod-install
+```
 
-## Step 3: Modifying your App
+Start the server
 
-Now that you have successfully run the app, let's modify it.
+```bash
+npm start -- --reset-cache
+```
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+Run on IOS
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+```bash
+npx react-native run-ios
+```
 
-## Congratulations! :tada:
+Run on ANDROID
 
-You've successfully run and modified your React Native App. :partying_face:
+```bash
+npx react-native run-android
+```
 
-### Now what?
+## The app
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+![Demo](https://github.com/Rakha112/react-native-animation/blob/main/ImageDemo.png)
