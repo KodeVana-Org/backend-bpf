@@ -11,16 +11,16 @@ import CustomImageCarousal from './CustomImageCarousal';
 const ImageCarousal = () => {
   const data = [
     {
-      image: require('../../assets/images/image-product-1.jpg'),
+      image: require('../../assets/images/CorouselImage1.jpg'),
     },
     {
-      image: require('../../assets/images/image-product-2.jpg'),
+      image: require('../../assets/images/CorouselImage2.jpg'),
     },
     {
-      image: require('../../assets/images/image-product-3.jpg'),
+      image: require('../../assets/images/CorouselImage3.jpg'),
     },
     {
-      image: require('../../assets/images/image-product-4.jpg'),
+      image: require('../../assets/images/CorouselImage4.jpg'),
     },
   ];
   return (

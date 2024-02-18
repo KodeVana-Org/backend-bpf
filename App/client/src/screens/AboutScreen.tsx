@@ -4,20 +4,20 @@ import NavHeader from '../components/Header/NavHeader';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Animated from 'react-native-reanimated';
 
-const VissionScreen = () => {
+const AboutScreen = () => {
   return (
     <SafeAreaProvider style={styles.container}>
       <Animated.View style={[styles.container]}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <NavHeader />
-          <Text style={{color: '#000'}}>VissionScreen</Text>
+          <Text style={{color: '#000'}}>AboutScreen</Text>
         </ScrollView>
       </Animated.View>
     </SafeAreaProvider>
   );
 };
 
-export default VissionScreen;
+export default AboutScreen;
 
 const styles = StyleSheet.create({
   container: {

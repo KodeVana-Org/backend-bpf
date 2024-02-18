@@ -1,5 +1,5 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import Animated, {
   Extrapolation,
   SharedValue,

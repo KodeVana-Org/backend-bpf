@@ -1,12 +1,19 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {ScrollView, StyleSheet, Text} from 'react-native';
+import NavHeader from '../components/Header/NavHeader';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Animated from 'react-native-reanimated';
 
 const NotificationScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={{color: '#000'}}>NotificationScreen</Text>
-    </SafeAreaView>
+    <SafeAreaProvider style={styles.container}>
+      <Animated.View style={[styles.container]}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <NavHeader />
+          <Text style={{color: '#000'}}>NotificationScreen</Text>
+        </ScrollView>
+      </Animated.View>
+    </SafeAreaProvider>
   );
 };
 

@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import PostIcon from '../../assets/icons/gallery.svg';
 
 const FAB = () => {
   const width = useSharedValue(60);
@@ -67,12 +68,9 @@ const FAB = () => {
         </Pressable>
         <View style={styles.contentContainer}>
           <View style={styles.iconContainer}>
-            <Image
-              source={require('../../assets/icons/FolderIcon.png')}
-              style={styles.icon}
-            />
+            <PostIcon height={25} width={25} fill="white" />
           </View>
-          <Text style={styles.text}>New Folder</Text>
+          <Text style={styles.text}>Upload Post</Text>
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.iconContainer}>
@@ -81,7 +79,7 @@ const FAB = () => {
               style={styles.icon}
             />
           </View>
-          <Text style={styles.text}>New File</Text>
+          <Text style={styles.text}>Edit Banner</Text>
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.iconContainer}>
@@ -90,7 +88,7 @@ const FAB = () => {
               style={styles.icon}
             />
           </View>
-          <Text style={styles.text}>Edit File</Text>
+          <Text style={styles.text}>Edit Members</Text>
         </View>
       </Animated.View>
     </View>
@@ -101,7 +99,7 @@ export default FAB;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#0F56B3',
+    backgroundColor: '#1d2733',
     position: 'absolute',
     bottom: 90,
     right: 30,

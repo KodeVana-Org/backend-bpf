@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, FlatList, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView} from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -11,8 +11,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SystemBars} from 'react-native-bars';
 import Drawer from '../components/Drawer/Drawer';
 import Header from '../components/Header/Header';
-import {message} from '../data/data.drawer';
-import Message from '../components/Message/Message';
+
 import ImageCarousal from '../components/Corousel/ImageCarousal';
 import JoinDonate from '../components/Join_Donate/JoinDonate';
 import FAB from '../components/FloatingActionButton/FAB';
@@ -36,7 +35,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaProvider>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <GestureHandlerRootView style={{flex: 1}}>
           {/* If you're not using react-native-bars, you can remove SystemBars */}
           <SystemBars animated={true} barStyle={'light-content'} />
@@ -49,12 +48,6 @@ const HomeScreen = () => {
             <Header active={active} />
             <ImageCarousal />
             <JoinDonate />
-            <FlatList
-              data={message}
-              renderItem={({item, index}) => {
-                return <Message item={item} key={index} />;
-              }}
-            />
           </Animated.View>
         </GestureHandlerRootView>
       </ScrollView>
@@ -69,6 +62,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#252d3a',
-    paddingBottom: 100,
+    paddingBottom: 300,
   },
 });

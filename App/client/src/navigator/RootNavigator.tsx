@@ -10,10 +10,10 @@ import BTCHistoryScreen from '../screens/BTCHistoryScreen';
 import MissionScreen from '../screens/MissionScreen';
 import AchievementScreen from '../screens/AchievementScreen';
 import VissionScreen from '../screens/VissionScreen.tsx';
-import CommitteeScreen from '../screens/VissionScreen.tsx';
-import MessageScreen from '../screens/MissionScreen.tsx';
-import GalleryScreen from '../screens/BTCHistoryScreen.tsx';
-import AboutScreen from '../screens/AchievementScreen.tsx';
+import CommitteeScreen from '../screens/CommitteeScreen';
+import MessageScreen from '../screens/MessageScreen.tsx';
+import GalleryScreen from '../screens/GalleryScreen';
+import AboutScreen from '../screens/AboutScreen.tsx';
 
 export type RootStackParamList = {
   Onboarding: undefined;
