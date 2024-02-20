@@ -4,6 +4,7 @@ const cors = require("cors");
 //importing routes
 const videosRoutes = require("./src/router/videoRoute.js");
 const userRoute = require("./src/router/userRoute.js");
+const paymentRoute = require('./src/router/paymentRoute.js');
 
 // Middleware to log requests
 app.use(cors());
@@ -17,6 +18,7 @@ app.use((req, res, next) => {
 
 app.use("/youtube", videosRoutes);
 app.use("/user", userRoute);
+app.use('/pay', paymentRoute);
 //http://localhost:6969/user/register
 //http://localhost:6969/user/verify-otp"
 // Route

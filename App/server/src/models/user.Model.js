@@ -1,46 +1,14 @@
 const mongoose = require("mongoose");
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  // username: {
-  //   type: String,
-  //   required: true,
-  //   unique: true,
-  //   minlength: [5, `Username must be at least 5 characters long.`],
-  //   maxlength: [32, `Username must be at most 32 characters long.`],
-  //
-  // },
-  firstName: {
-    type: String,
-    required: true,
-    minlength: [2, `First name must be at least 1 character long.`],
-    maxlength: [32, `First name must be at most 32 characters long.`],
-    validate: {
-      validator: function (v) {
-        return /^[A-Z][a-zA-Z]*$/.test(v);
-      },
-      message: (props) =>
-        `${props.value} is not a valid first name! First character must be capital and only letters are allowed.`,
-    },
-  },
+ 
   profileImage: {
     type: String,
   },
-  lastName: {
-    type: String,
-    required: true,
-    minlength: [1, `Last name must be at least 1 character long.`],
-    maxlength: [32, `Last name must be at most 32 characters long.`],
-    validate: {
-      validator: function (v) {
-        return /^[A-Z][a-zA-Z]*$/.test(v);
-      },
-      message: (props) =>
-        `${props.value} is not a valid last name! First character must be capital and only letters are allowed.`,
-    },
-  },
+
   email: {
     type: String,
-    required: true,
     unique: true,
     validate: {
       validator: function (v) {
@@ -49,36 +17,62 @@ const userSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid email address!`,
     },
   },
+
   password: {
     type: String,
     required: true,
     minlength: [7, `Password must be at least 7 characters long.`],
-    maxlength: [18, `Password must be at most 18 characters long.`],
+    // maxlength: [18, `Password must be at most 18 characters long.`],
   },
+
   phone: {
     type: Number,
   },
-  location: {
-    type: String,
-  },
+
   userType: {
     type: String,
     enum: ["user", "member", "admin"],
     default: "user",
   },
-  otp: {
-    type: Number,
-    default: null,
+  
+  members: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Member'
   },
-  otpExpiration: {
-    type: Date,
-    default: null,
-  },
+  
   createdAt: {
     type: Date,
     default: Date.now,
   },
+
+  status: {
+    type: String,
+    enum:['active','deleting'],
+    default: 'active'
+  },
+
 });
+
+//method to compare passwords
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Pre-save hook to hash password before saving
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) {
+    return next(); // If password is not modified, move to the next middleware
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error); // Pass any error to the next middleware
+  }
+});
+
 
 const User = mongoose.model("User", userSchema);
 
