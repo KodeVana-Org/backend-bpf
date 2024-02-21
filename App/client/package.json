@@ -18,6 +18,8 @@
     "@react-three/drei": "^9.97.0",
     "@react-three/fiber": "^8.15.16",
     "@shopify/react-native-skia": "^0.1.237",
+    "@stripe/stripe-react-native": "^0.37.0",
+    "axios": "^1.6.7",
     "expo": "^50.0.4",
     "expo-gl": "~13.6.0",
     "lottie-react-native": "^6.6.0",
