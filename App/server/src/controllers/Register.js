@@ -68,6 +68,7 @@ exports.RegisterForm = async (req, res) => {
 
     return res.status(200).json({
       message: "OTP sent successfully. Please verify.",
+      otp: otp,
     });
   } catch (error) {
     console.error("Error registering user:", error);
@@ -77,11 +78,24 @@ exports.RegisterForm = async (req, res) => {
 
 exports.VerifyOTP = async (req, res) => {
   try {
-    const { email, otp, phone, password } = req.body;
-    console.log(otp);
+    const { emailOrPhone, otp, password } = req.body;
+    console.log(emailOrPhone, otp, password);
+    let email;
+    let phone;
+    let phoneNumberWithCountryCode;
 
-    if (!email && !phone && !password && !otp) {
-      throw new Error("Email or Phone is required");
+    if (!otp || !password || !emailOrPhone) {
+      return res.status(404).json({
+        success: false,
+        message: "All fileds are required",
+      });
+    }
+
+    if (emailOrPhone.includes("@")) {
+      email = emailOrPhone;
+    } else {
+      phone = emailOrPhone;
+      phoneNumberWithCountryCode = "+91" + phone;
     }
 
     let verificationMethod;
@@ -98,7 +112,7 @@ exports.VerifyOTP = async (req, res) => {
     // Find the user in the OTP collection based on email or phone
     const userOTP = await OTP.findOne({
       [verificationMethod]: contactInfo,
-    }).sort({ createdAt: -1 });
+    });
 
     // If user not found or OTP doesn't match, return error
     if (!userOTP || !userOTP.otp || userOTP.otp !== otp) {
@@ -108,7 +122,8 @@ exports.VerifyOTP = async (req, res) => {
     // Check if OTP is expired (e.g., after 5 minutes)
     const otpTimestamp = userOTP.createdAt.getTime();
     const currentTimestamp = Date.now();
-    const otpValidityDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+    const otpValidityDuration = 2 * 60 * 1000;
     if (currentTimestamp - otpTimestamp > otpValidityDuration) {
       return res.status(400).json({ error: "OTP expired" });
     }
@@ -138,7 +153,7 @@ exports.VerifyOTP = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "User saved successfully", token: token });
+      .json({ message: "User Registered  successfully", token: token });
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return res.status(500).json({ error: "Failed to verify OTP" });
