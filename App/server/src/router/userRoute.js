@@ -14,8 +14,8 @@ const updateJoinUser = require("../controllers/join/updatejoinUser.js");
 
 //router to fetch
 router.post("/register", userRoute.RegisterForm);
-router.post("/login-with-otp", userRoute.LoginWithOtp);
-router.post("/verify-for-login", userRoute.VerifyOtpAndLogin);
+router.post("/login-with-otp", userRoute.loginWithOtp);
+router.post("/verify-for-login", userRoute.verifyOtpAndLogin);
 router.post("/login", lognRoute.Login);
 router.post("/update-profile/:userId", profilePicture.UpdateProfilePic);
 router.post("/verify-otp", userRoute.VerifyOTP);
