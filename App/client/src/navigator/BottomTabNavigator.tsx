@@ -4,11 +4,11 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import CustomBottomTab from '../components/BottomButton/CustomBottomTab';
-import HomeScreen from '../screens/HomeScreen';
-import PostScreen from '../screens/PostScreen';
-import VideoScreen from '../screens/VideoScreen';
-import LiveScreen from '../screens/LiveScreen';
-import ConferenceScreen from '../screens/ConferenceScreen';
+import HomeScreen from '../screens/bottomTab/HomeScreen';
+import PostScreen from '../screens/bottomTab/PostScreen';
+import VideoScreen from '../screens/bottomTab/VideoScreen';
+import LiveScreen from '../screens/bottomTab/LiveScreen';
+import ConferenceScreen from '../screens/bottomTab/ConferenceScreen';
 
 export type BottomTabParamList = {
   Home: undefined;
