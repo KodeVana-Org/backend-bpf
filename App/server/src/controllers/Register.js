@@ -8,6 +8,7 @@ const validator = require("validator");
 exports.RegisterForm = async (req, res) => {
   try {
     const { emailPhone } = req.body;
+    console.log(emailPhone);
     let email;
     let phone;
     let phoneNumberWithCountryCode;
@@ -15,6 +16,7 @@ exports.RegisterForm = async (req, res) => {
     if (!emailPhone) {
       return res.status(403).json({
         success: false,
+        statusCode: 403,
         message: " Enter an Phone or Email ",
       });
     }
