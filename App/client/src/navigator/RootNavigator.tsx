@@ -54,7 +54,7 @@ const RootNavigator = () => {
   return (
     <Stack.Navigator
       // initialRouteName={isAppFirstLaunched ? 'OnboardingScreen' : 'Main'}
-      initialRouteName={'EditMemberScreen'}
+      initialRouteName={'AuthNavigator'}
       screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
       {/*_*\ Temp Screens \*_*/}
       <Stack.Screen

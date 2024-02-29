@@ -58,16 +58,20 @@ const LoginPassScreen = () => {
   const validateEmailPhone = () => {
     if (emailPhone === '') {
       emailPhoneErrorMessageType('This field is required!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (emailPhone.length < 5) {
       emailPhoneErrorMessageType('Should be of min 5 character!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (emailPhone.length > 32) {
       emailPhoneErrorMessageType('Should be of max 32 character!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (/[a-zA-Z]/g.test(emailPhone) || emailPhone.includes('@')) {
       if (!emailRegex.test(emailPhone)) {
         emailPhoneErrorMessageType('Please enter a valid email address!');
+        validatePassword();
         setEmailPhoneErrorMessageVisible(true);
       } else {
         setEmailPhoneErrorMessageVisible(false);
@@ -75,6 +79,7 @@ const LoginPassScreen = () => {
       }
     } else if (!phoneRegex.test(emailPhone)) {
       emailPhoneErrorMessageType('Please enter a valid phone number!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else {
       setEmailPhoneErrorMessageVisible(false);

@@ -69,7 +69,7 @@ const LoginOtpScreen = () => {
     if (validateEmailPhone()) {
       // TODO: Check if Email or phone exit, if exist =
       console.log('Yay! Entered a valid email address');
-      navigation.navigate('AuthenthicationOTP');
+      navigation.navigate('VerifyOTPScreen');
     }
   };
 

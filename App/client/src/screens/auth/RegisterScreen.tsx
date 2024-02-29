@@ -1,3 +1,4 @@
+// http://localhost:6969/user/register
 import React, {useState} from 'react';
 import {
   StyleSheet,
@@ -11,6 +12,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import axios from 'axios';
 import LinearGradient from 'react-native-linear-gradient';
 import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
 import {useNavigation} from '@react-navigation/native';
@@ -58,16 +60,20 @@ const RegisterScreen = () => {
   const validateEmailPhone = () => {
     if (emailPhone === '') {
       emailPhoneErrorMessageType('This field is required!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (emailPhone.length < 5) {
       emailPhoneErrorMessageType('Should be of min 5 character!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (emailPhone.length > 32) {
       emailPhoneErrorMessageType('Should be of max 32 character!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (/[a-zA-Z]/g.test(emailPhone) || emailPhone.includes('@')) {
       if (!emailRegex.test(emailPhone)) {
         emailPhoneErrorMessageType('Please enter a valid email address!');
+        validatePassword();
         setEmailPhoneErrorMessageVisible(true);
       } else {
         setEmailPhoneErrorMessageVisible(false);
@@ -75,6 +81,7 @@ const RegisterScreen = () => {
       }
     } else if (!phoneRegex.test(emailPhone)) {
       emailPhoneErrorMessageType('Please enter a valid phone number!');
+      validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else {
       setEmailPhoneErrorMessageVisible(false);
@@ -97,12 +104,63 @@ const RegisterScreen = () => {
       return true;
     }
   };
+  // interface ApiResponse {
+  //   data: any; // Define the structure of the 'data' field based on your backend response
+  //   message: string;
+  // }
 
-  const handlesendOTPButton = () => {
+  // const handleRegisterUser = async () => {
+  const handlesendOTPButton = async () => {
     if (validateEmailPhone() && validatePassword()) {
       // TODO: Check if credential already exit and redirect to OTPAuthenthicationScreen;
-      console.log('Yay! Form Submitted Successfully');
-      navigation.navigate('AuthenthicationOTP');
+
+      // try {
+      //   // setIsLoading(true);
+      //   // setError(null);
+
+      //   const response = await axios.post(
+      //     'http://localhost:6969/user/register',
+      //     emailPhone,
+      //   );
+      //   if (
+      //     response.data.data &&
+      //     response.data.message === 'OTP sent successfully. Please verify.'
+      //   ) {
+      //     console.log('Registration Successful'); // Log success message
+      //     navigation.navigate('AuthenthicationOTP');
+      //   } else {
+      //     console.log('Registration failed'); // Log failure message
+      //   }
+      // } catch (error) {
+      //   console.error(error);
+      //   console.log('Yoops! registration failed.');
+      // } finally {
+      //   // setIsLoading(false);
+      // }
+
+      axios
+        .post('http://localhost:6969/user/register', emailPhone)
+        .then(response => {
+          console.log(response.data.data);
+          console.log('Yay! data send successfully.');
+        })
+        .catch(error => {
+          if (error.response) {
+            // Server responded with a status other than 200 range
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+            console.log('Server responded with a status other than 200 range');
+          } else if (error.request) {
+            // Request was made but no response was received
+            console.log(error.request);
+            console.log('Request was made but no response was received');
+          } else {
+            // Error occurred in setting up the request
+            console.error('Error', error.message);
+            console.log('Error occurred in setting up the request');
+          }
+        });
     }
   };
 

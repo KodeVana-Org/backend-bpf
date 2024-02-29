@@ -77,7 +77,7 @@ const RegisterScreen = () => {
     if (validatePassword()) {
       // TODO: Check if credential already exit and redirect to OTPAuthenthicationScreen;
       console.log('Yay! Form Submitted Successfully');
-      navigation.navigate('AuthenthicationOTP');
+      navigation.navigate('VerifyOTPScreen');
     }
   };
 

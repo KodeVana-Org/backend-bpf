@@ -20,7 +20,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const AuthenthicationOTPScreen = () => {
+const VerifyOTPScreen = () => {
   const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
 
   const [otp, setOtp] = useState('');
@@ -147,7 +147,7 @@ const AuthenthicationOTPScreen = () => {
   );
 };
 
-export default AuthenthicationOTPScreen;
+export default VerifyOTPScreen;
 
 const styles = StyleSheet.create({
   container: {
