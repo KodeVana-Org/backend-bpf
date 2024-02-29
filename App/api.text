@@ -13,10 +13,13 @@ http://localhost:6969/user/register
 =>verify-otp
 http://localhost:6969/user/verify-otp"
 
+<<<<<<< HEAD
+=======
 => register with otp
 http://localhost:6969/user/login-with-otp
 http://localhost:6969/user/verify-for-login
 
+>>>>>>> 889bfa4bfad0b64975ee3426b80d495a3fd9ee75
 => get-profile
 http://localhost:6969/user/me
 
