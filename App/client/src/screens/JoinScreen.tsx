@@ -8,8 +8,8 @@ const JoinScreen = () => {
   return (
     <SafeAreaProvider style={styles.container}>
       <Animated.View style={[styles.container]}>
+        <NavHeader />
         <ScrollView showsVerticalScrollIndicator={false}>
-          <NavHeader />
           <Text style={{color: '#000'}}>JoinScreen</Text>
         </ScrollView>
       </Animated.View>

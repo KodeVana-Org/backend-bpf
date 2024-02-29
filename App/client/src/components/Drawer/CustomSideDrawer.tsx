@@ -21,33 +21,33 @@ type Props = {
   drawerWidth: SharedValue<number>;
 };
 
-const Drawer = ({active, translateX, drawerWidth}: Props) => {
+const CustomSideDrawer = ({active, translateX, drawerWidth}: Props) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   // const activeDrawer = useState()
 
   const handleHistoryPress = () => {
-    navigation.navigate('BTCHistoryScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleMissionPress = () => {
-    navigation.navigate('MissionScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleAchievementPress = () => {
-    navigation.navigate('AchievementScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleVisionPress = () => {
-    navigation.navigate('VissionScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleCommitteePress = () => {
-    navigation.navigate('CommitteeScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleMessagePress = () => {
-    navigation.navigate('MessageScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleGalleryPress = () => {
-    navigation.navigate('GalleryScreen');
+    navigation.navigate('SideDrawer');
   };
   const handleAboutPress = () => {
-    navigation.navigate('AboutScreen');
+    navigation.navigate('SideDrawer');
   };
 
   const insets = useSafeAreaInsets();
@@ -187,7 +187,7 @@ const Drawer = ({active, translateX, drawerWidth}: Props) => {
   );
 };
 
-export default Drawer;
+export default CustomSideDrawer;
 
 const styles = StyleSheet.create({
   container: {

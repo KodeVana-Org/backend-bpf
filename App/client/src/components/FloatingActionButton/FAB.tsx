@@ -8,7 +8,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import PostIcon from '../../assets/icons/gallery.svg';
+import PostIcon from '../../assets/icons/Gallery';
 
 const FAB = () => {
   const width = useSharedValue(60);

@@ -1,16 +1,12 @@
-import {Image, Pressable, StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-// import BackIcon from '../../assets/icons/ArrowIcon.svg';
+import BackIconLight from '../../assets/icons/ChevronLeftLight.js';
 import {useNavigation} from '@react-navigation/native';
 
 const NavHeader = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
 
   return (
     <View
@@ -18,15 +14,13 @@ const NavHeader = () => {
         styles.container,
         //If you're not using react-native-bars, you can remove these edges
         {paddingTop: insets.top},
-        // {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
+        {paddingTop: Platform.OS === 'ios' ? insets.top : 12},
       ]}>
-      <Pressable style={styles.backIcon} onPress={handleBackPress}>
-        <Image
-          source={require('../../assets/icons/ArrowIcon.png')}
-          style={styles.back}
-        />
-        {/* <BackIcon width={23} height={23} fill="white" /> */}
-      </Pressable>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backIcon}>
+        <BackIconLight width={24} height={24} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -35,21 +29,13 @@ export default NavHeader;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1d2733',
-    height: 80,
-    paddingBottom: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    backgroundColor: '#046A38',
   },
-  backIcon: {
-    transform: [{rotate: '180deg'}],
-  },
-  back: {
-    width: 35,
-    height: 35,
-    // color: 'white',
-  },
+  backIcon: {},
 });

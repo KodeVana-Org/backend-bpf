@@ -8,7 +8,7 @@ interface Props {
 
 const DrawerItems = ({route, isFocused}: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  const renderIcon = (route: string, isFocused: boolean) => {
+  const renderDrawerItem = (route: string, isFocused: boolean) => {
     switch (route) {
       case 'History':
         return (
@@ -63,7 +63,7 @@ const DrawerItems = ({route, isFocused}: Props) => {
     }
   };
 
-  return <View>{renderIcon(route, isFocused)}</View>;
+  return <View>{renderDrawerItem(route, isFocused)}</View>;
 };
 
 export default DrawerItems;

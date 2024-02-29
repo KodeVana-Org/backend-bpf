@@ -1,23 +1,22 @@
-import {Image, Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
+import MenuIcon from '../../assets/icons/Hamburger.js';
+import BellIcon from '../../assets/icons/BellIcon.js';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {SharedValue} from 'react-native-reanimated';
-import BellIcon from '../../assets/icons/Bell.svg';
+import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigator/RootNavigator';
-import {useNavigation} from '@react-navigation/native';
+import {SharedValue} from 'react-native-reanimated';
 
-type Props = {
+type HeaderProps = {
   active: SharedValue<boolean>;
+  title: string;
 };
 
-const Header = ({active}: Props) => {
+const Header = ({active, title}: HeaderProps) => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const handleNotificationPress = () => {
-    navigation.navigate('NotificationScreen');
-  };
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
     <View
@@ -25,40 +24,48 @@ const Header = ({active}: Props) => {
         styles.container,
         //If you're not using react-native-bars, you can remove these edges
         {paddingTop: insets.top},
-        // {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
+        {paddingTop: Platform.OS === 'ios' ? insets.top : 12},
       ]}>
-      <Pressable
-        style={styles.ham}
-        onPress={() => {
-          active.value = true;
-        }}>
-        <Image
-          source={require('../../assets/icons/Hamburger.png')}
-          style={styles.ham}
-        />
-      </Pressable>
-      <Pressable style={styles.bell} onPress={handleNotificationPress}>
-        <BellIcon width={23} height={23} fill="white" />
-      </Pressable>
+      <View style={styles.leftHeader}>
+        <TouchableOpacity
+          onPress={() => {
+            active.value = true;
+          }}
+          style={styles.menuIcon}>
+          <MenuIcon fill="#fff" width={24} height={24} />
+        </TouchableOpacity>
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('NotificationScreen')}
+        style={styles.notificationIcon}>
+        <BellIcon fill="#fff" width={24} height={24} />
+      </TouchableOpacity>
     </View>
   );
 };
 
-export default Header;
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#252d3a',
-    marginHorizontal: 15,
-    marginVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#046A38',
+    justifyContent: 'space-between',
   },
-  ham: {
-    width: 35,
-    height: 35,
+  leftHeader: {
+    flexDirection: 'row',
   },
-  bell: {},
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  menuIcon: {
+    marginRight: 20,
+  },
+  notificationIcon: {},
 });
+
+export default Header;

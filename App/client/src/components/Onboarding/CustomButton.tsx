@@ -17,6 +17,7 @@ import {useNavigation} from '@react-navigation/native';
 import {OnboardingData} from '../../data/data.onboarding';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigator/RootNavigator';
+import ArrowIcon from '../../assets/icons/ArrowIcon';
 
 type Props = {
   dataLength: number;
@@ -96,10 +97,15 @@ const CustomButton = ({flatListRef, flatListIndex, dataLength, x}: Props) => {
         <Animated.Text style={[styles.textButton, textAnimationStyle]}>
           Get Started
         </Animated.Text>
-        <Animated.Image
+        <ArrowIcon
+          style={[styles.arrow, arrowAnimationStyle]}
+          width={24}
+          height={24}
+        />
+        {/* <Animated.Image
           source={require('../../assets/icons/ArrowIcon.png')}
           style={[styles.arrow, arrowAnimationStyle]}
-        />
+        /> */}
       </Animated.View>
     </TouchableWithoutFeedback>
   );

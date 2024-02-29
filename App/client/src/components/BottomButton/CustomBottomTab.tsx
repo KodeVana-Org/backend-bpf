@@ -10,7 +10,7 @@ const CustomBottomTab = ({state, navigation}: BottomTabBarProps) => {
 
   // Calculate the bottomPadding and height based on whether the system navigation bar is present
   const bottomPadding = Platform.OS === 'android' ? insets.bottom - 7 : 0;
-  const tabBarHeight = Platform.OS === 'android' ? 60 + insets.bottom - 7 : 60;
+  const tabBarHeight = Platform.OS === 'android' ? 65 + insets.bottom - 7 : 60;
 
   return (
     <View
@@ -50,7 +50,8 @@ const CustomBottomTab = ({state, navigation}: BottomTabBarProps) => {
             style={{flex: 1}}>
             <View style={styles.contentContainer}>
               <BottomTabIcon route={route.name} isFocused={isFocused} />
-              <Text style={{color: isFocused ? 'white' : 'gray', fontSize: 12}}>
+              <Text
+                style={{color: isFocused ? '#FF671F' : 'gray', fontSize: 12}}>
                 {route.name}
               </Text>
             </View>
@@ -70,12 +71,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1d2733',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingLeft: 15,
     paddingRight: 20,
     overflow: 'hidden',
+    borderTopWidth: 1,
+    borderTopColor: '#ededed',
+    borderTopEndRadius: 10,
+    borderTopStartRadius: 10,
   },
   contentContainer: {
     flex: 1,

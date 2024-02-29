@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView, Text} from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -9,14 +9,11 @@ import Animated, {
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SystemBars} from 'react-native-bars';
-import Drawer from '../components/Drawer/Drawer';
-import Header from '../components/Header/Header';
+import Drawer from '../../components/Drawer/CustomSideDrawer';
+import Header from '../../components/Header/Header';
+import FAB from '../../components/FloatingActionButton/FAB';
 
-import ImageCarousal from '../components/Corousel/ImageCarousal';
-import JoinDonate from '../components/Join_Donate/JoinDonate';
-import FAB from '../components/FloatingActionButton/FAB';
-
-const HomeScreen = () => {
+const Videocreen = () => {
   const active = useSharedValue(false);
   const drawerWidth = useSharedValue(1000);
   const drawerTranslateX = useSharedValue(-drawerWidth.value);
@@ -35,19 +32,18 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaProvider>
+      <Drawer
+        active={active}
+        translateX={drawerTranslateX}
+        drawerWidth={drawerWidth}
+      />
+      <Header title="Video Gallery" active={active} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <GestureHandlerRootView style={{flex: 1}}>
           {/* If you're not using react-native-bars, you can remove SystemBars */}
           <SystemBars animated={true} barStyle={'light-content'} />
-          <Drawer
-            active={active}
-            translateX={drawerTranslateX}
-            drawerWidth={drawerWidth}
-          />
           <Animated.View style={[styles.container, animatedStyle]}>
-            <Header active={active} />
-            <ImageCarousal />
-            <JoinDonate />
+            <Text>Videocreen</Text>
           </Animated.View>
         </GestureHandlerRootView>
       </ScrollView>
@@ -56,12 +52,12 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default Videocreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#252d3a',
-    paddingBottom: 300,
+    backgroundColor: '#fff',
+    paddingBottom: 750,
   },
 });

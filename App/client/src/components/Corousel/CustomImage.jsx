@@ -1,7 +1,7 @@
 import {StyleSheet, Image, View} from 'react-native';
 import React, {useLayoutEffect, useState} from 'react';
-import Animated, {useAnimatedStyle, interpolate} from 'react-native-reanimated';
-const CustomImage = ({item, x, index, size, spacer}) => {
+import Animated, {useAnimatedStyle} from 'react-native-reanimated';
+const CustomImage = ({item, index, size, spacer}) => {
   const [aspectRatio, setAspectRatio] = useState(1);
 
   // Get Image Width and Height to Calculate AspectRatio
@@ -13,13 +13,13 @@ const CustomImage = ({item, x, index, size, spacer}) => {
   }, [item.image]);
 
   const style = useAnimatedStyle(() => {
-    const scale = interpolate(
-      x.value,
-      [(index - 2) * size, (index - 1) * size, index * size],
-      [0.8, 1, 0.8],
-    );
+    // const scale = interpolate(
+    //   x.value,
+    //   [(index - 2) * size, (index - 1) * size, index * size],
+    //   [0.8, 1, 0.8],
+    // );
     return {
-      transform: [{scale}],
+      // transform: [{scale}],
     };
   });
 

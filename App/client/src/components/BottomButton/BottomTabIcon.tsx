@@ -1,10 +1,10 @@
 import React from 'react';
 import {View} from 'react-native';
-import HomeIcon from '../../assets/icons/home.svg';
-import PostIcon from '../../assets/icons/gallery.svg';
-import VideoIcon from '../../assets/icons/video.svg';
-import LiveIcon from '../../assets/icons/live.svg';
-import UserGroupIcon from '../../assets/icons/userGroup.svg';
+import HomeIcon from '../../assets/icons/Home.js';
+import PostIcon from '../../assets/icons/Gallery.js';
+import VideoIcon from '../../assets/icons/Video.js';
+import LiveIcon from '../../assets/icons/Live.js';
+import UserGroupIcon from '../../assets/icons/Conference.js';
 
 interface Props {
   route: string;
@@ -14,8 +14,8 @@ interface Props {
 const BottomTabIcon = ({route, isFocused}: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   const renderIcon = (route: string, isFocused: boolean) => {
-    let height: number = 20;
-    let width: number = 20;
+    let height: number = 22;
+    let width: number = 22;
 
     switch (route) {
       case 'Home':
@@ -23,7 +23,7 @@ const BottomTabIcon = ({route, isFocused}: Props) => {
           <HomeIcon
             width={width}
             height={height}
-            fill={isFocused ? 'white' : 'gray'}
+            fill={isFocused ? '#FF671F' : '#a8a8a8'}
           />
         );
       case 'Post':
@@ -31,15 +31,15 @@ const BottomTabIcon = ({route, isFocused}: Props) => {
           <PostIcon
             width={width}
             height={height}
-            fill={isFocused ? 'white' : 'gray'}
+            fill={isFocused ? '#FF671F' : '#a8a8a8'}
           />
         );
       case 'Video':
         return (
           <VideoIcon
-            width={22}
-            height={22}
-            fill={isFocused ? 'white' : 'gray'}
+            width={26}
+            height={26}
+            fill={isFocused ? '#FF671F' : '#a8a8a8'}
           />
         );
       case 'Live':
@@ -47,7 +47,7 @@ const BottomTabIcon = ({route, isFocused}: Props) => {
           <LiveIcon
             width={width}
             height={height}
-            fill={isFocused ? 'white' : 'gray'}
+            fill={isFocused ? '#FF671F' : '#a8a8a8'}
           />
         );
       case 'Conference':
@@ -55,7 +55,7 @@ const BottomTabIcon = ({route, isFocused}: Props) => {
           <UserGroupIcon
             width={width}
             height={height}
-            fill={isFocused ? 'white' : 'gray'}
+            fill={isFocused ? '#FF671F' : '#a8a8a8'}
           />
         );
       default:

@@ -9,11 +9,11 @@ import Animated, {
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {SystemBars} from 'react-native-bars';
-import Drawer from '../components/Drawer/Drawer';
-import Header from '../components/Header/Header';
-import FAB from '../components/FloatingActionButton/FAB';
+import Drawer from '../../components/Drawer/CustomSideDrawer';
+import Header from '../../components/Header/Header';
+import FAB from '../../components/FloatingActionButton/FAB';
 
-const LiveScreen = () => {
+const PostScreen = () => {
   const active = useSharedValue(false);
   const drawerWidth = useSharedValue(1000);
   const drawerTranslateX = useSharedValue(-drawerWidth.value);
@@ -32,18 +32,18 @@ const LiveScreen = () => {
 
   return (
     <SafeAreaProvider>
+      <Drawer
+        active={active}
+        translateX={drawerTranslateX}
+        drawerWidth={drawerWidth}
+      />
+      <Header title="Posts" active={active} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <GestureHandlerRootView style={{flex: 1}}>
           {/* If you're not using react-native-bars, you can remove SystemBars */}
           <SystemBars animated={true} barStyle={'light-content'} />
-          <Drawer
-            active={active}
-            translateX={drawerTranslateX}
-            drawerWidth={drawerWidth}
-          />
           <Animated.View style={[styles.container, animatedStyle]}>
-            <Header active={active} />
-            <Text>LiveScreen</Text>
+            <Text>PostScreen</Text>
           </Animated.View>
         </GestureHandlerRootView>
       </ScrollView>
@@ -52,12 +52,12 @@ const LiveScreen = () => {
   );
 };
 
-export default LiveScreen;
+export default PostScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#252d3a',
+    backgroundColor: '#fff',
     paddingBottom: 750,
   },
 });
