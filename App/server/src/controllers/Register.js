@@ -6,20 +6,20 @@ const { renderEmailTemplate } = require("../utils/template/loginWithOtp.js");
 
 exports.RegisterForm = async (req, res) => {
   try {
-    const { emailOrPhone } = req.body;
+    const { emailPhone } = req.body;
     let email;
     let phone;
     let phoneNumberWithCountryCode;
 
-    if (!emailOrPhone) {
+    if (!emailPhone) {
       throw new Error("Email or phone number is required.");
     }
 
     // Check if the provided input is an email or a phone number
-    if (emailOrPhone.includes("@")) {
-      email = emailOrPhone;
+    if (emailPhone.includes("@")) {
+      email = emailPhone;
     } else {
-      phone = emailOrPhone;
+      phone = emailPhone;
       phoneNumberWithCountryCode = "+91" + phone;
     }
 
@@ -68,6 +68,7 @@ exports.RegisterForm = async (req, res) => {
 
     return res.status(200).json({
       message: "OTP sent successfully. Please verify.",
+      data: otp,
     });
   } catch (error) {
     console.error("Error registering user:", error);

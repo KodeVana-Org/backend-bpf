@@ -14,20 +14,32 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
-import {AuthParamList} from '../../navigator/AuthNavigator';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
+import {verify_otp} from '../../api/auth_api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const VerifyOTPScreen = () => {
-  const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
+interface Props {
+  route: {
+    params: {
+      EmailPhone: string;
+      Password: string;
+    };
+  };
+}
 
+const VerifyOTPScreen = ({route}: Props) => {
+  // const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
+  const homeNavigation = useNavigation<BottomTabParamList>();
+
+  const emailPhone = route.params.EmailPhone;
+  const password = route.params.Password;
   const [otp, setOtp] = useState('');
   const [otpErrorMessage, setOtpErrorMessage] = useState('');
   const [otpErrorMessageVisible, setOtpErrorMessageVisible] = useState(false);
 
-  const otpRegex = /^\d{4}$/;
   const handleOtpInputChange = (text: string) => {
     setOtp(text);
   };
@@ -44,7 +56,7 @@ const VerifyOTPScreen = () => {
     } else if (otp.length !== 4) {
       otpErrorMessageType('OTP should be of 4 digit!');
       setOtpErrorMessageVisible(true);
-    } else if (!otpRegex.test(otp)) {
+    } else if (!/^\d{4}$/.test(otp)) {
       otpErrorMessageType('Invalid OTP!');
       setOtpErrorMessageVisible(true);
     } else {
@@ -57,10 +69,28 @@ const VerifyOTPScreen = () => {
     // TODO: Activate the button if the timer is over and when user clicks on the button sesend another OTP and disable the button again for the defined amount of time;
   };
 
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     if (validateOtp()) {
-      // TODO: Verify OTP and prompt to reset password or redirect to the HomeScreen
-      console.log('Entered valid OTP!');
+      try {
+        const result = await verify_otp({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+          password: password,
+          otp: otp,
+        });
+        console.log(result);
+        homeNavigation.Home;
+        if (result.status === 200) {
+          await AsyncStorage.setItem('AccessToken', result.token);
+        } else {
+          otpErrorMessageType('Wrong OTP!');
+          setOtpErrorMessageVisible(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      otpErrorMessageType('Invalid OTP!');
+      setOtpErrorMessageVisible(true);
     }
   };
 
@@ -137,7 +167,7 @@ const VerifyOTPScreen = () => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate('HomeScreen')}
+          onPress={() => homeNavigation.Home}
           style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />

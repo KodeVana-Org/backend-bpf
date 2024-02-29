@@ -21,9 +21,12 @@ export type RootStackParamList = {
   EditMemberScreen: undefined;
 };
 
+
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
+  const [tokenExist, setTokenExist] = useState(false);
+
   // const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
   //   null,
   // );
@@ -51,21 +54,35 @@ const RootNavigator = () => {
   //   return null;
   // }
 
+  useEffect(() => {
+    setTimeout(() => {
+      handleGetToken();
+    }, 2000);
+  });
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('AccessToken');
+    if (dataToken) {
+      setTokenExist(true);
+    } else {
+      setTokenExist(false);
+    }
+  };
+
   return (
     <Stack.Navigator
       // initialRouteName={isAppFirstLaunched ? 'OnboardingScreen' : 'Main'}
-      initialRouteName={'AuthNavigator'}
+      initialRouteName={tokenExist ? 'BottomTabNavigator' : 'AuthNavigator'}
       screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
       {/*_*\ Temp Screens \*_*/}
       <Stack.Screen
-        name="EditMemberScreen"
-        component={EditMemberScreen}
-        options={{headerShown: false}}
-      />
-
-      <Stack.Screen
         name="Onboarding"
         component={OnboardingScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="EditMemberScreen"
+        component={EditMemberScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen

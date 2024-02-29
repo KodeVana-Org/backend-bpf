@@ -3,19 +3,19 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginPassScreen from '../screens/auth/LoginPassScreen';
 import LoginOtpScreen from '../screens/auth/LoginOtpScreen';
 import ValidateCredentialScreen from '../screens/auth/ValidateCredentialScreen';
-import AuthenthicationOTPScreen from '../screens/auth/AuthenthicationOTPScreen';
+import VerifyOTPScreen from '../screens/auth/VerifyOTPScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import SetPasswordScreen from '../screens/auth/SetPasswordScreen';
-import HomeScreen from '../screens/bottomTab/HomeScreen';
+// import HomeScreen from '../screens/bottomTab/HomeScreen';
 
 export type AuthParamList = {
   LoginPass: undefined;
   LoginOtp: undefined;
   ValidateCredential: undefined;
-  AuthenthicationOTP: undefined;
+  VerifyOTPScreen: undefined;
   Register: undefined;
   SetPassword: undefined;
-  HomeScreen: undefined;
+  // HomeScreen: undefined;
 };
 
 export default function AuthNavigator() {
@@ -29,13 +29,10 @@ export default function AuthNavigator() {
         name="ValidateCredential"
         component={ValidateCredentialScreen}
       />
-      <Stack.Screen
-        name="AuthenthicationOTP"
-        component={AuthenthicationOTPScreen}
-      />
+      <Stack.Screen name="VerifyOTPScreen" component={VerifyOTPScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="SetPassword" component={SetPasswordScreen} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
     </Stack.Navigator>
   );
 }

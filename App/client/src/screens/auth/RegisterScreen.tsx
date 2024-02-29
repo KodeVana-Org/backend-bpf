@@ -1,4 +1,3 @@
-// http://localhost:6969/user/register
 import React, {useState} from 'react';
 import {
   StyleSheet,
@@ -12,7 +11,8 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import axios from 'axios';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import {user_register} from '../../api/auth_api';
 import LinearGradient from 'react-native-linear-gradient';
 import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
 import {useNavigation} from '@react-navigation/native';
@@ -104,63 +104,28 @@ const RegisterScreen = () => {
       return true;
     }
   };
-  // interface ApiResponse {
-  //   data: any; // Define the structure of the 'data' field based on your backend response
-  //   message: string;
-  // }
 
-  // const handleRegisterUser = async () => {
+  // Pass email to the server
   const handlesendOTPButton = async () => {
     if (validateEmailPhone() && validatePassword()) {
-      // TODO: Check if credential already exit and redirect to OTPAuthenthicationScreen;
-
-      // try {
-      //   // setIsLoading(true);
-      //   // setError(null);
-
-      //   const response = await axios.post(
-      //     'http://localhost:6969/user/register',
-      //     emailPhone,
-      //   );
-      //   if (
-      //     response.data.data &&
-      //     response.data.message === 'OTP sent successfully. Please verify.'
-      //   ) {
-      //     console.log('Registration Successful'); // Log success message
-      //     navigation.navigate('AuthenthicationOTP');
-      //   } else {
-      //     console.log('Registration failed'); // Log failure message
-      //   }
-      // } catch (error) {
-      //   console.error(error);
-      //   console.log('Yoops! registration failed.');
-      // } finally {
-      //   // setIsLoading(false);
-      // }
-
-      axios
-        .post('http://localhost:6969/user/register', emailPhone)
-        .then(response => {
-          console.log(response.data.data);
-          console.log('Yay! data send successfully.');
-        })
-        .catch(error => {
-          if (error.response) {
-            // Server responded with a status other than 200 range
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            console.log('Server responded with a status other than 200 range');
-          } else if (error.request) {
-            // Request was made but no response was received
-            console.log(error.request);
-            console.log('Request was made but no response was received');
-          } else {
-            // Error occurred in setting up the request
-            console.error('Error', error.message);
-            console.log('Error occurred in setting up the request');
-          }
+      try {
+        const result = await user_register({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+          password: password,
         });
+        console.log(result);
+        navigation.navigate('VerifyOTPScreen', {
+          EmailPhone: emailPhone,
+          Password: password,
+        } as any);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      emailPhoneErrorMessageType('Invalid input details!');
+      passwordErrorMessageType('Invalid input details!');
+      setEmailPhoneErrorMessageVisible(true);
+      setPasswordErrorMessageVisible(true);
     }
   };
 

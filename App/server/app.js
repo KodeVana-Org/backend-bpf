@@ -14,7 +14,7 @@ const usrRoute = require("./src/router/adminRoute/userRoute.js");
 
 // Middleware to log requests
 app.use(express.json());
-// app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
