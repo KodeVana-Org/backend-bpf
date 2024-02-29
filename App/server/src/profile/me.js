@@ -1,5 +1,5 @@
 const User = require("../models/user.Model");
-const distMember = require("../models/distMember.Model.js");
+const member = require("../models/distMember.Model.js");
 const Join = require("../models/join.Model.js");
 const Admin = require("../models/admin.Model.js");
 
