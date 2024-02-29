@@ -14,7 +14,7 @@ exports.getYoutubeVideo = async (req, res) => {
         },
       },
     );
-
+    // TODO:THIS IS TODOJJ
     if (!response.data.items || response.data.items.length === 0) {
       throw new Error("No videos found.");
     }
@@ -45,13 +45,14 @@ exports.getYoutubeVideo = async (req, res) => {
           console.error("Video details not found:", videoId);
           return null;
         }
-
+        // WARN: THIS IS WARNINGJ
         const duration = parseISO8601Duration(
           videoDetails.contentDetails.duration,
         );
         const thumbnails = videoDetails.snippet.thumbnails;
         const thumbnailUrl = thumbnails ? thumbnails.medium.url : "";
 
+        // NOTE: this is noe
         return {
           title: videoDetails.snippet.title,
           videoId: videoId,

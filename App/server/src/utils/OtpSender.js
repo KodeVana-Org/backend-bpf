@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const twilio = require("twilio");
 
-function sendOTPByEmail(email, otp) {
+function sendOTPByEmail(email, otp, htmlTemplate) {
   // You need to configure nodemailer with your email provider
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -10,12 +10,13 @@ function sendOTPByEmail(email, otp) {
       pass: process.env.MAIL_PASSWORD,
     },
   });
-  console.log()
+  console.log();
   const mailOptions = {
     from: "BPF-OTP-Verification x",
     to: email,
     subject: "OTP Verification",
-    text: `Your OTP is: ${otp}`,
+    html: htmlTemplate,
+    text: `Your OTP for email ${email} is: ${otp}`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {

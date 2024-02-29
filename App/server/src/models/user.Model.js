@@ -1,8 +1,42 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
- 
+  firstName: {
+    type: String,
+    validate: {
+      validator: (value) => /^[a-zA-Z]+$/.test(value),
+      message: "First name must contain only letters (alphabetic characters)",
+    },
+    minlength: [2, "name at least contain 2 letter"],
+    maxlength: [32, "limit exceeded"],
+  },
+
+  lastName: {
+    type: String,
+    validate: {
+      validator: (value) => /^[a-zA-Z]+$/.test(value),
+      message: "Last name must contain only letters (alphabetic characters)",
+    },
+    minlength: [2, "title at least contain 2 letter"],
+    maxlength: [32, "limit exceeded"],
+  },
+
+  dist: {
+    type: String,
+    enum: ["Tamulpur", "Baksa", "Kokrajhar", "Udalguri", "Chirang"],
+  },
+
+  fatherName: {
+    type: String,
+    // validate: {
+    // validator: (value) => /^[a-zA-Z]+$/.test(value),
+    // message: "First name must contain only letters (alphabetic characters)",
+    // },
+    minlength: [2, "title at least contain 2 letter"],
+    maxlength: [32, "limit exceeded"],
+  },
+
   profileImage: {
     type: String,
   },
@@ -22,24 +56,54 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: [7, `Password must be at least 7 characters long.`],
-    // maxlength: [18, `Password must be at most 18 characters long.`],
   },
 
   phone: {
     type: Number,
+    unique: true,
+  },
+
+  randomToken: {
+    type: String,
   },
 
   userType: {
     type: String,
-    enum: ["user", "member", "admin"],
+    enum: ["user", "joined", "member", "post-admin", "admin", "superAdmin"],
     default: "user",
   },
-  
-  members: {
+
+  joined: {
     type: mongoose.Schema.Types.ObjectId,
-    ref:'Member'
+    ref: "Join",
   },
-  
+
+  member: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "DistrictMember",
+  },
+
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+  },
+
+  po: {
+    type: String,
+  },
+
+  ps: {
+    type: String,
+  },
+  gender: {
+    type: String,
+    enum: ["male", "female"],
+  },
+
+  otp: {
+    type: Number,
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -47,20 +111,19 @@ const userSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum:['active','deleting'],
-    default: 'active'
+    enum: ["active", "deleting"],
+    default: "active",
   },
-
 });
 
 //method to compare passwords
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Pre-save hook to hash password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     return next(); // If password is not modified, move to the next middleware
   }
 
@@ -72,7 +135,6 @@ userSchema.pre('save', async function(next) {
     next(error); // Pass any error to the next middleware
   }
 });
-
 
 const User = mongoose.model("User", userSchema);
 
