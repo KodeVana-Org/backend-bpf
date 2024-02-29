@@ -6,84 +6,69 @@ const { renderEmailTemplate } = require("../utils/template/loginWithOtp.js");
 
 exports.RegisterForm = async (req, res) => {
   try {
-    const { phone, email } = req.body;
+    const { emailOrPhone } = req.body;
+    let email;
+    let phone;
     let phoneNumberWithCountryCode;
-    if (phone != undefined) {
-      return (phoneNumberWithCountryCode = "+91" + phone);
-    }
 
-    console.log(phoneNumberWithCountryCode, email);
-    let verificationMethod;
-
-    if (!email && !phoneNumberWithCountryCode) {
+    if (!emailOrPhone) {
       throw new Error("Email or phone number is required.");
     }
 
-    // Check if the provided input looks like an email or a phone number
-    if (email) {
-      if (email.includes("@")) {
-        verificationMethod = "email";
-      } else {
-        throw new Error("Invalid email format.");
-      }
-    } else if (phoneNumberWithCountryCode) {
-      if (!/^\+?\d+$/.test(phone)) {
-        throw new Error("Invalid phone number format.");
-      }
-      verificationMethod = "phone";
+    // Check if the provided input is an email or a phone number
+    if (emailOrPhone.includes("@")) {
+      email = emailOrPhone;
+    } else {
+      phone = emailOrPhone;
+      phoneNumberWithCountryCode = "+91" + phone;
     }
 
+    // Find existing OTP entry based on email or phone number
+    let existingOTP;
+    let existingUser;
     if (email) {
-      const existingUserByEmail = await User.findOne({ email: email });
-      if (existingUserByEmail) {
-        return res.status(400).json({ error: "Email already exists." });
-      }
+      existingOTP = await OTP.findOne({ email: email });
+      existingUser = await User.findOne({ email: email });
     } else if (phoneNumberWithCountryCode) {
-      const existingUserByPhone = await User.findOne({
-        phone: phoneNumberWithCountryCode,
+      existingOTP = await OTP.findOne({ phone: phoneNumberWithCountryCode });
+      existingUser = await User.findOne({ phone: phone });
+    }
+    if (existingUser) {
+      return res.status(403).json({
+        success: false,
+        message: "User already exist",
       });
-      if (existingUserByPhone) {
-        return res.status(400).json({ error: "Phone number already exists." });
-      }
     }
-
-    // Generate OTP
-    const otp = Math.floor(10000 + Math.random() * 90000);
-    console.log("the otp is :", otp);
-
-    // Save OTP and expiration time to the database
-    const otpExpiration = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes in milliseconds
-
-    // Send OTP to user via email or SMS based on verificationMethod
-    if (verificationMethod === "email") {
-      otpSender.sendOTPByEmail(email, otp);
-    } else if (verificationMethod === "phone") {
-      otpSender.sendOTPViaSMS(phoneNumberWithCountryCode, otp);
-    }
-
-    let existingOTP = await OTP.findOne({
-      $or: [{ email: email }, { phone: phoneNumberWithCountryCode }],
-    });
-
+    const otp = Math.floor(1000 + Math.random() * 9000);
     if (existingOTP) {
-      // Update existing OTP entry with new OTP and expiration time
+      // Update existing OTP entry with new OTP
       existingOTP.otp = otp;
-      existingOTP.expiration = otpExpiration;
+      existingOTP.expiration = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes in milliseconds
       existingOTP.createdAt = new Date();
       await existingOTP.save();
     } else {
       // Create new OTP entry
-      await OTP.create({
+      const newOTP = new OTP({
         email: email,
         phone: phoneNumberWithCountryCode,
         otp: otp,
-        expiration: otpExpiration,
+        expiration: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes in milliseconds
+        createdAt: new Date(),
       });
+      await newOTP.save();
     }
 
-    return res
-      .status(200)
-      .json({ otp, message: "OTP sent successfully. Please verify." });
+    // Send OTP to user via email or SMS based on verificationMethod
+    if (email) {
+      const htmlTemplate = renderEmailTemplate(email, otp);
+      otpSender.sendOTPByEmail(email, otp, htmlTemplate);
+    } else if (phoneNumberWithCountryCode) {
+      otpSender.sendOTPViaSMS(phoneNumberWithCountryCode, otp);
+    }
+
+    return res.status(200).json({
+      message: "OTP sent successfully. Please verify.",
+    });
   } catch (error) {
     console.error("Error registering user:", error);
     return res.status(500).json({ error: "Failed to register user" });
@@ -93,6 +78,7 @@ exports.RegisterForm = async (req, res) => {
 exports.VerifyOTP = async (req, res) => {
   try {
     const { email, otp, phone, password } = req.body;
+    console.log(otp);
 
     if (!email && !phone && !password && !otp) {
       throw new Error("Email or Phone is required");
@@ -113,10 +99,9 @@ exports.VerifyOTP = async (req, res) => {
     const userOTP = await OTP.findOne({
       [verificationMethod]: contactInfo,
     }).sort({ createdAt: -1 });
-    console.log(userOTP.otp);
-    console.log(userOTP);
+
     // If user not found or OTP doesn't match, return error
-    if (!userOTP || userOTP.otp !== otp) {
+    if (!userOTP || !userOTP.otp || userOTP.otp !== otp) {
       return res.status(400).json({ error: "Invalid OTP or email/phone" });
     }
 

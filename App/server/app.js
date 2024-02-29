@@ -13,8 +13,9 @@ const historyRotue = require("./src/router/historyRoute.js");
 const usrRoute = require("./src/router/adminRoute/userRoute.js");
 
 // Middleware to log requests
-app.use(cors());
 app.use(express.json());
+// app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
