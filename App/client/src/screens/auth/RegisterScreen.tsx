@@ -19,9 +19,9 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
 import EyeClose from '../../assets/icons/EyeClose';
 import EyeOpen from '../../assets/icons/EyeOpen';
-import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
-import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
-import HomeScreen from '../bottomTab/HomeScreen';
+// import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
+// import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+// import HomeScreen from '../bottomTab/HomeScreen';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -114,14 +114,20 @@ const RegisterScreen = () => {
       try {
         const result = await user_register({
           emailPhone: emailPhone.toLocaleLowerCase(),
-          password: password,
         });
-        console.log(result);
-        navigation.navigate('VerifyOTPScreen', {
-          EmailPhone: emailPhone,
-          Password: password,
-        } as any);
+        if (result.data) {
+          console.log(result);
+          navigation.navigate('VerifyOTPScreen', {
+            EmailPhone: emailPhone,
+            Password: password,
+          } as any);
+        } else if (result.status !== 200) {
+          console.log(result);
+          emailPhoneErrorMessageType('User already exist!');
+          setEmailPhoneErrorMessageVisible(true);
+        }
       } catch (error) {
+        console.error('Error registering user:', error);
         console.error(error);
       }
     } else {
@@ -214,7 +220,7 @@ const RegisterScreen = () => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate(HomeScreen)}
+          // onPress={() => navigation.navigate(HomeScreen)}
           style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />

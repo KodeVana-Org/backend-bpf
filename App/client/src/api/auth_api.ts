@@ -3,7 +3,6 @@ import ApiManager from './ApiManager';
 // Register new user
 interface RegisterData {
   emailPhone: string;
-  password: string;
 }
 
 export const user_register = async (data: RegisterData): Promise<any> => {
@@ -11,7 +10,8 @@ export const user_register = async (data: RegisterData): Promise<any> => {
     const response = await ApiManager.post('user/register', data);
     return response.data;
   } catch (error: any) {
-    return error.respose.data;
+    console.error('Error occurred during user registration:', error.message);
+    return error.response.data;
   }
 };
 
@@ -27,7 +27,8 @@ export const verify_otp = async (data: OtpData): Promise<any> => {
     const response = await ApiManager.post('user/verify-otp', data);
     return response.data;
   } catch (error: any) {
-    return error.respose.data;
+    console.error('Error occurred during OTP verification:', error.message);
+    return error.response.data;
   }
 };
 

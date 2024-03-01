@@ -39,7 +39,7 @@ exports.RegisterForm = async (req, res) => {
       existingOTP = await OTP.findOne({ phone: phoneNumberWithCountryCode });
       existingUser = await User.findOne({ phone: phone });
     }
-    if (existingUser || existingOTP) {
+    if (existingUser) {
       return res.status(403).json({
         success: false,
         message: "User already exist",
@@ -121,7 +121,7 @@ exports.VerifyOTP = async (req, res) => {
     }
     const otpData = await OTP.findOne(otpQury);
     if (!otpData || otpData.otp !== otp) {
-      return res.status(404).json({
+      return res.status(401).json({
         success: false,
         message: "OTP is invalid",
       });
@@ -155,9 +155,8 @@ exports.VerifyOTP = async (req, res) => {
     }
 
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET_KEY);
-    return res.json({
-      token: token,
-      data: user,
+    return res.status(200).json({
+      data: {token: token},
       message: "User saved successfully",
     });
   } catch (error) {

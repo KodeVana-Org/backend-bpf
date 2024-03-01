@@ -15,9 +15,9 @@ import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
 import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import {verify_otp} from '../../api/auth_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios, {AxiosResponse} from 'axios';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -30,10 +30,6 @@ interface Props {
     };
   };
 }
-// interface ApiResponse {
-//   message: string;
-//   token: string;
-// }
 
 const VerifyOTPScreen = ({route}: Props) => {
   // const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
@@ -77,50 +73,28 @@ const VerifyOTPScreen = ({route}: Props) => {
   const handleSubmitButton = async () => {
     if (validateOtp()) {
       try {
-        const response = await axios.post(
-          'http://192.168.206.6:6969/user/verify-otp',
-          {
-            emailPhone,
-            password,
-            otp,
-          },
-        );
-        console.log(response.data.token);
-        console.log('Success: ' + response.data.message);
-      } catch (error: any) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          console.log('Error: ' + error.response.data.error);
-        } else {
-          console.error('Error:', error);
-          console.log('An error occurred while registering.');
+        const result = await verify_otp({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+          password: password,
+          otp: otp,
+        });
+        if (result.data) {
+          AsyncStorage.setItem('AccessToken', result.data.token);
+          otpErrorMessageType('OTP verified successfully');
+          console.log('OTP verified successfully');
+          // TODO: Redirect to HomeScreen
+        } else if (result.status !== 200) {
+          otpErrorMessageType('Invalid OTP!');
+          setOtpErrorMessageVisible(true);
         }
+        // navigation.navigate('HomeScreen');
+      } catch (error) {
+        console.error('Error verifying OTP:', error);
+        console.error(error);
       }
-
-      //   try {
-      //     const result: AxiosResponse<ApiResponse> = await verify_otp({
-      //       emailPhone: emailPhone.toLocaleLowerCase(),
-      //       password: password,
-      //       otp: otp,
-      //     });
-      //     console.log(result);
-      //     homeNavigation.Home;
-      //     if (result.data) {
-      //       await AsyncStorage.setItem('AccessToken', result.data.token);
-      //       console.log(result);
-      //     } else {
-      //       otpErrorMessageType('Wrong OTP!');
-      //       setOtpErrorMessageVisible(true);
-      //     }
-      //   } catch (error) {
-      //     console.error(error);
-      //   }
-      // } else {
-      //   otpErrorMessageType('Invalid OTP!');
-      //   setOtpErrorMessageVisible(true);
+    } else {
+      otpErrorMessageType('Invalid OTP!');
+      setOtpErrorMessageVisible(true);
     }
   };
 
