@@ -11,7 +11,6 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import {user_register} from '../../api/auth_api';
 import LinearGradient from 'react-native-linear-gradient';
 import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
@@ -20,12 +19,16 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
 import EyeClose from '../../assets/icons/EyeClose';
 import EyeOpen from '../../assets/icons/EyeOpen';
+import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
+import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import HomeScreen from '../bottomTab/HomeScreen';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const RegisterScreen = () => {
   const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
+  // const homeNavigation = useNavigation<BottomTabBarProps<BottomTabParamList>>();
 
   const [hidePassword, setHidePassword] = useState(true);
   const toggleHidePassword = () => {
@@ -210,7 +213,9 @@ const RegisterScreen = () => {
             </Pressable>
           </View>
         </View>
-        <TouchableOpacity style={styles.skipBtn}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(HomeScreen)}
+          style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>

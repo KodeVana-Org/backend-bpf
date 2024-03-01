@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,6 +18,7 @@ import EyeOpen from '../../assets/icons/EyeOpen';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
+import {AppContext} from '../../navigator/AppContext';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -30,6 +31,7 @@ const LoginPassScreen = () => {
     setHidePassword(!hidePassword);
   };
 
+  const {setSkippedAuth} = useContext(AppContext);
   const [emailPhone, setEmailPhone] = useState('');
   const [password, setPassword] = useState('');
   const [emailPhoneErrorMessage, setEmailPhoneErrorMessage] = useState('');
@@ -38,6 +40,10 @@ const LoginPassScreen = () => {
     useState(false);
   const [passwordErrorMessageVisible, setPasswordErrorMessageVisible] =
     useState(false);
+
+  const handleSkipButton = () => {
+    setSkippedAuth(true);
+  };
 
   const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   const phoneRegex = /^\d{10}$/;
@@ -206,9 +212,7 @@ const LoginPassScreen = () => {
             </Text>
           </Pressable>
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeScreen')}
-          style={styles.skipBtn}>
+        <TouchableOpacity onPress={handleSkipButton} style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>

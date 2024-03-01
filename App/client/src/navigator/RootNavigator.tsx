@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
-import OnboardingScreen from '../screens/OnboardingScreen';
+// import OnboardingScreen from '../screens/OnboardingScreen';
 import AuthNavigator from './AuthNavigator';
 import BottomTabNavigator from './BottomTabNavigator';
 import SideDrawerNavigator from './DrawerNavigator';
@@ -9,6 +9,7 @@ import JoinScreen from '../screens/JoinScreen';
 import DonateScreen from '../screens/DonateScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import EditMemberScreen from '../screens/admin/EditMemberScreen';
+import {AppContext} from './AppContext';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -20,7 +21,6 @@ export type RootStackParamList = {
   NotificationScreen: undefined;
   EditMemberScreen: undefined;
 };
-
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -69,30 +69,36 @@ const RootNavigator = () => {
     }
   };
 
+  const {skippedAuth} = useContext(AppContext);
+
   return (
     <Stack.Navigator
       // initialRouteName={isAppFirstLaunched ? 'OnboardingScreen' : 'Main'}
       initialRouteName={tokenExist ? 'BottomTabNavigator' : 'AuthNavigator'}
       screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
-      {/*_*\ Temp Screens \*_*/}
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Onboarding"
         component={OnboardingScreen}
         options={{headerShown: false}}
-      />
+      /> */}
+
+      {skippedAuth ? (
+        <Stack.Screen
+          name="BottomTabNavigator"
+          component={BottomTabNavigator}
+          options={{headerShown: false}}
+        />
+      ) : (
+        <Stack.Screen
+          name="AuthNavigator"
+          component={AuthNavigator}
+          options={{headerShown: false}}
+        />
+      )}
+
       <Stack.Screen
         name="EditMemberScreen"
         component={EditMemberScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="AuthNavigator"
-        component={AuthNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="BottomTabNavigator"
-        component={BottomTabNavigator}
         options={{headerShown: false}}
       />
       <Stack.Screen
