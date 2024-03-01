@@ -25,7 +25,7 @@ router.post("/cancel-delete", verifyToken, DeleteAccount.CancelDeletion);
 router.post("/forgot-password", ForgotPass.ForgotPassword);
 router.post("/reset-password", ForgotPass.ResetPassword);
 router.post("/join", joinMember.Join);
-router.get("/get-join-user", getJoinUser.JoinUser);
+router.get("/get-join-user", verifyToken, getJoinUser.JoinUser);
 router.patch("/update-join-user/:userid", updateJoinUser.UpdateJoinerUser);
 
 module.exports = router;

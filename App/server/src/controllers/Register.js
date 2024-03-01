@@ -8,6 +8,7 @@ const validator = require("validator");
 exports.RegisterForm = async (req, res) => {
   try {
     const { emailPhone } = req.body;
+    console.log(emailPhone);
     let email;
     let phone;
     let phoneNumberWithCountryCode;
@@ -15,6 +16,7 @@ exports.RegisterForm = async (req, res) => {
     if (!emailPhone) {
       return res.status(403).json({
         success: false,
+        statusCode: 403,
         message: " Enter an Phone or Email ",
       });
     }
@@ -37,7 +39,7 @@ exports.RegisterForm = async (req, res) => {
       existingOTP = await OTP.findOne({ phone: phoneNumberWithCountryCode });
       existingUser = await User.findOne({ phone: phone });
     }
-    if (existingUser) {
+    if (existingUser || existingOTP) {
       return res.status(403).json({
         success: false,
         message: "User already exist",
@@ -83,87 +85,170 @@ exports.RegisterForm = async (req, res) => {
 exports.VerifyOTP = async (req, res) => {
   try {
     const { emailPhone, otp, password } = req.body;
-    let email;
-    let phone;
-    let phoneNumberWithCountryCode;
-
-    if (!otp || !password || !emailPhone) {
-      return res.status(404).json({
-        success: false,
-        message: "All fileds are required",
-      });
+    let email, phone;
+    // Check if email or phone is provided
+    if (
+      !emailPhone ||
+      (emailPhone.includes("@") && /^\d+$/.test(emailPhone)) ||
+      (!emailPhone.includes("@") && !/^\d+$/.test(emailPhone))
+    ) {
+      throw new Error("Provide either email or phone, but not both");
     }
 
     if (emailPhone.includes("@")) {
       email = emailPhone;
     } else {
-      phone = emailPhone;
-      phoneNumberWithCountryCode = "+91" + phone;
+      phone = "+91" + emailPhone;
     }
-
-    let verificationMethod;
-    let contactInfo;
-
+    const otpQury = {};
     if (email) {
-      verificationMethod = "email";
-      contactInfo = email;
+      otpQury.email = email;
     } else {
-      verificationMethod = "phone";
-      contactInfo = phone;
+      otpQury.phone = phone;
     }
-
-    // Find the user in the OTP collection based on email or phone
-    const userOTP = await OTP.findOne({
-      [verificationMethod]: contactInfo,
-    });
-
-    // If user not found or OTP doesn't match, return error
-    if (!userOTP || !userOTP.otp || userOTP.otp !== otp) {
-      return res.status(400).json({ error: "Invalid OTP or email/phone" });
-    }
-
-    // Check if OTP is expired (e.g., after 5 minutes)
-    const otpTimestamp = userOTP.createdAt.getTime();
-    const currentTimestamp = Date.now();
-
-    const otpValidityDuration = 2 * 60 * 1000;
-    if (currentTimestamp - otpTimestamp > otpValidityDuration) {
-      await OTP.deleteOne({ _id: userOTP._id });
-      return res.status(400).json({ error: "OTP expired" });
-    }
-
-    // If OTP is valid, save the user and remove the OTP data
-    const newUser = new User();
+    const userQuery = {};
     if (email) {
-      newUser.email = email;
+      userQuery.email = email;
     } else {
-      newUser.phone = phone;
+      userQuery.phone = phone;
     }
-    newUser.password = password;
-    await newUser.save();
+    const userExist = await User.exists(userQuery);
+    if (userExist) {
+      return res.status(404).json({
+        success: false,
+        message: "User already registerd",
+      });
+    }
+    const otpData = await OTP.findOne(otpQury);
+    if (!otpData || otpData.otp !== otp) {
+      return res.status(404).json({
+        success: false,
+        message: "OTP is invalid",
+      });
+    }
 
-    // Remove the user data from the OTP collection
-    await OTP.deleteOne({ _id: userOTP._id });
+    // Save email or phone in User model
+    let user;
+    if (email) {
+      user = new User({ email, password });
+    } else {
+      user = new User({ phone, password });
+    }
+    await user.save();
 
     //token-generate
-    const token = jwt.sign(
-      {
-        emailPhone: contactInfo,
-        userType: newUser.userType,
-        id: newUser._id,
-      },
-      process.env.JWT_SECRET_KEY,
-    );
+    let tokenPayload = {
+      userType: user.userType,
+      id: user._id,
+    };
 
-    return res
-      .status(200)
-      .json({ message: "User Registered  successfully", token: token });
+    if (user.email && user.phone) {
+      tokenPayload = {
+        email: user.email,
+        phone: user.phone,
+        ...tokenPayload,
+      };
+    } else if (user.email) {
+      tokenPayload.email = user.email;
+    } else if (user.phone) {
+      tokenPayload.phone = user.phone;
+    }
+
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET_KEY);
+    return res.json({
+      token: token,
+      data: user,
+      message: "User saved successfully",
+    });
   } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return res.status(500).json({ error: "Failed to verify OTP" });
+    return res.status(400).json({ error: error.message });
   }
 };
 
+// exports.VerifyOTP = async (req, res) => {
+//   try {
+//     const { emailPhone, otp, password } = req.body;
+//     let email;
+//     let phone;
+//     let phoneNumberWithCountryCode;
+//
+//     if (!otp || !password || !emailPhone) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "All fileds are required",
+//       });
+//     }
+//
+//     if (emailPhone.includes("@")) {
+//       email = emailPhone;
+//     } else {
+//       phone = emailPhone;
+//       phoneNumberWithCountryCode = "+91" + phone;
+//     }
+//
+//     let verificationMethod;
+//     let contactInfo;
+//
+//     if (email) {
+//       verificationMethod = "email";
+//       contactInfo = email;
+//     } else {
+//       verificationMethod = "phone";
+//       contactInfo = phone;
+//     }
+//
+//     // Find the user in the OTP collection based on email or phone
+//     const userOTP = await OTP.findOne({
+//       [verificationMethod]: contactInfo,
+//     });
+//
+//     // If user not found or OTP doesn't match, return error
+//     if (!userOTP || !userOTP.otp || userOTP.otp !== otp) {
+//       return res.status(400).json({ error: "Invalid OTP or email/phone" });
+//     }
+//
+//     // Check if OTP is expired (e.g., after 5 minutes)
+//     const otpTimestamp = userOTP.createdAt.getTime();
+//     const currentTimestamp = Date.now();
+//
+//     const otpValidityDuration = 2 * 60 * 1000;
+//     if (currentTimestamp - otpTimestamp > otpValidityDuration) {
+//       await OTP.deleteOne({ _id: userOTP._id });
+//       return res.status(400).json({ error: "OTP expired" });
+//     }
+//
+//     // If OTP is valid, save the user and remove the OTP data
+//     const newUser = new User();
+//     if (email) {
+//       newUser.email = email;
+//     } else {
+//       newUser.phone = phone;
+//     }
+//     newUser.password = password;
+//     await newUser.save();
+//
+//     // Remove the user data from the OTP collection
+//     await OTP.deleteOne({ _id: userOTP._id });
+//
+//     //token-generate
+//     const token = jwt.sign(
+//       {
+//         emailPhone: contactInfo,
+//         userType: newUser.userType,
+//         id: newUser._id,
+//       },
+//       process.env.JWT_SECRET_KEY,
+//     );
+//
+//     return res
+//       .status(200)
+//       .json({ message: "User Registered  successfully", token: token });
+//   } catch (error) {
+//     console.error("Error verifying OTP:", error);
+//     return res.status(500).json({ error: "Failed to verify OTP" });
+//   }
+// };
+//
 exports.loginWithOtp = async (req, res) => {
   try {
     const { emailPhone } = req.body;
