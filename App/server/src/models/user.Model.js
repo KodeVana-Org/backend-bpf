@@ -43,7 +43,10 @@ const userSchema = new mongoose.Schema({
 
   email: {
     type: String,
-    unique: true,
+    sparse: true, // Allows multiple documents to have null value for this field
+    required: function () {
+      return !this.phone;
+    },
     validate: {
       validator: function (v) {
         return /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/.test(v);
@@ -59,8 +62,13 @@ const userSchema = new mongoose.Schema({
   },
 
   phone: {
-    type: Number,
-    unique: true,
+    // type: Number,
+    sparse: true,
+    type: String,
+    required: function () {
+      return !this.email;
+    },
+    unique: false,
   },
 
   randomToken: {
@@ -116,6 +124,20 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    // Check if the document is new
+    // Check if both email and phone are provided
+    if (this.email && this.phone) {
+      throw new Error("Provide either email or phone, but not both");
+    }
+    // Check if neither email nor phone is provided
+    if (!this.email && !this.phone) {
+      throw new Error("Provide either email or phone");
+    }
+  }
+  next();
+});
 //method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
