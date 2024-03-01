@@ -11,7 +11,7 @@ const otpSchema = new mongoose.Schema({
   },
 
   phone: {
-    type: Number,
+    type: String,
   },
 
   expiration: {
