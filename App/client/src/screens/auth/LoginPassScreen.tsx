@@ -19,6 +19,8 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
 import {AppContext} from '../../navigator/AppContext';
+import {user_login_pass} from '../../api/auth_api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -31,7 +33,7 @@ const LoginPassScreen = () => {
     setHidePassword(!hidePassword);
   };
 
-  const {setSkippedAuth} = useContext(AppContext);
+  const {setNavigateToHome} = useContext(AppContext);
   const [emailPhone, setEmailPhone] = useState('');
   const [password, setPassword] = useState('');
   const [emailPhoneErrorMessage, setEmailPhoneErrorMessage] = useState('');
@@ -40,10 +42,6 @@ const LoginPassScreen = () => {
     useState(false);
   const [passwordErrorMessageVisible, setPasswordErrorMessageVisible] =
     useState(false);
-
-  const handleSkipButton = () => {
-    setSkippedAuth(true);
-  };
 
   const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   const phoneRegex = /^\d{10}$/;
@@ -60,7 +58,7 @@ const LoginPassScreen = () => {
     setPasswordErrorMessage(message);
   };
 
-  // Validate Email or Phone
+  /// Validate Email or Phone
   const validateEmailPhone = () => {
     if (emailPhone === '') {
       emailPhoneErrorMessageType('This field is required!');
@@ -75,7 +73,7 @@ const LoginPassScreen = () => {
       validatePassword();
       setEmailPhoneErrorMessageVisible(true);
     } else if (/[a-zA-Z]/g.test(emailPhone) || emailPhone.includes('@')) {
-      if (!emailRegex.test(emailPhone)) {
+      if (!emailRegex.test(emailPhone) || emailPhone.charAt(0) === '@') {
         emailPhoneErrorMessageType('Please enter a valid email address!');
         validatePassword();
         setEmailPhoneErrorMessageVisible(true);
@@ -93,13 +91,13 @@ const LoginPassScreen = () => {
     }
   };
 
-  // Validate Password
+  /// Validate Password
   const validatePassword = () => {
     if (password === '') {
       passwordErrorMessageType('This field is required!');
       setPasswordErrorMessageVisible(true);
-    } else if (password.length < 5) {
-      passwordErrorMessageType('Should be of min 5 character!');
+    } else if (password.length < 7) {
+      passwordErrorMessageType('Should be of min 7 character!');
       setPasswordErrorMessageVisible(true);
     } else if (password.length > 32) {
       passwordErrorMessageType('Should be of max 32 character!');
@@ -110,11 +108,50 @@ const LoginPassScreen = () => {
     }
   };
 
-  const handleLoginButton = () => {
+  /// Pass user data to the server
+  const handleLoginButton = async () => {
     if (validateEmailPhone() && validatePassword()) {
-      // TODO: Submit form
-      console.log('Yay! Form Submitted Successfully');
+      try {
+        const result = await user_login_pass({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+          password: password,
+        });
+        if (result.data.token) {
+          console.log('Logged in successfully', result.data.token);
+          handleNavigateToHome();
+          storeToken(result.data.token);
+        } else if (result.status !== 200) {
+          console.log(result);
+          emailPhoneErrorMessageType('Invalid input details!');
+          passwordErrorMessageType('Invalid input details!');
+          setEmailPhoneErrorMessageVisible(true);
+          setPasswordErrorMessageVisible(true);
+        }
+      } catch (error) {
+        console.log('Error logging user:', error);
+        console.log(error);
+      }
+    } else {
+      emailPhoneErrorMessageType('Invalid input details!');
+      passwordErrorMessageType('Invalid input details!');
+      setEmailPhoneErrorMessageVisible(true);
+      setPasswordErrorMessageVisible(true);
     }
+  };
+
+  /// Store user login token
+  const storeToken = async (token: string) => {
+    try {
+      await AsyncStorage.setItem('AccessToken', token);
+      console.log('Token stored successfully:', token);
+    } catch (error) {
+      console.log('Error storing token:', error);
+    }
+  };
+
+  /// Handle navigation to HomeScreen
+  const handleNavigateToHome = () => {
+    setNavigateToHome(true);
   };
 
   return (
@@ -143,7 +180,7 @@ const LoginPassScreen = () => {
         <View style={styles.formContainer}>
           <View style={[styles.inputFieldContainer, styles.emailPhoneInput]}>
             <Text style={styles.inputFieldLebel}>Email or Phone Number*</Text>
-            {/* Email OR Phone Input Field */}
+            {/**  Email OR Phone Input Field **/}
             <TextInput
               inputMode="email"
               onChangeText={handleEmailPhoneInputChange}
@@ -159,7 +196,7 @@ const LoginPassScreen = () => {
           <View style={styles.inputFieldContainer}>
             <Text style={styles.inputFieldLebel}>Password*</Text>
             <View style={styles.passwordInput}>
-              {/* Password Input Field */}
+              {/** Password Input Field **/}
               <TextInput
                 onChangeText={handlePasswordInputChange}
                 value={password}
@@ -184,7 +221,7 @@ const LoginPassScreen = () => {
           </View>
           <Pressable
             style={styles.forgotPassBtn}
-            onPress={() => navigation.navigate('ValidateCredential')}>
+            onPress={() => navigation.navigate('ForgotPassword')}>
             <Text style={styles.forgotPassLebel}>Forgot Password?</Text>
           </Pressable>
           <View style={styles.loginBtnContainer}>
@@ -212,7 +249,7 @@ const LoginPassScreen = () => {
             </Text>
           </Pressable>
         </View>
-        <TouchableOpacity onPress={handleSkipButton} style={styles.skipBtn}>
+        <TouchableOpacity onPress={handleNavigateToHome} style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>

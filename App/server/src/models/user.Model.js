@@ -109,7 +109,7 @@ const userSchema = new mongoose.Schema({
   },
 
   otp: {
-    type: Number,
+    type: String,
   },
 
   createdAt: {

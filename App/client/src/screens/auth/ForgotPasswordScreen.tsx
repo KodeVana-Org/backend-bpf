@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,15 +16,92 @@ import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
+import {AppContext} from '../../navigator/AppContext';
+import {user_forgot_pass} from '../../api/auth_api';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const ResetPasswordScreen = () => {
+const ForgotPasswordScreen = () => {
   const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
 
-  const handleResendOtpButton = () => {
-    // TODO: Activate the button if the timer is over and when user clicks on the button sesend another OTP and disable the button again for the defined amount of time;
+  const {setNavigateToHome} = useContext(AppContext);
+  const [emailPhone, setEmailPhone] = useState('');
+  const [emailPhoneErrorMessage, setEmailPhoneErrorMessage] = useState('');
+  const [emailPhoneErrorMessageVisible, setEmailPhoneErrorMessageVisible] =
+    useState(false);
+
+  const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  const phoneRegex = /^\d{10}$/;
+  const handleEmailPhoneInputChange = (text: string) => {
+    setEmailPhone(text);
+  };
+  const emailPhoneErrorMessageType = (message: string) => {
+    setEmailPhoneErrorMessage(message);
+  };
+
+  // Validate Email or Phone
+  const validateEmailPhone = () => {
+    if (emailPhone === '') {
+      emailPhoneErrorMessageType('This field is required!');
+      setEmailPhoneErrorMessageVisible(true);
+    } else if (emailPhone.length < 5) {
+      emailPhoneErrorMessageType('Should be of min 5 character!');
+      setEmailPhoneErrorMessageVisible(true);
+    } else if (emailPhone.length > 32) {
+      emailPhoneErrorMessageType('Should be of max 32 character!');
+      setEmailPhoneErrorMessageVisible(true);
+    } else if (
+      /[a-zA-Z]/g.test(emailPhone) ||
+      emailPhone.includes('@') ||
+      emailPhone.charAt(0) === '@'
+    ) {
+      if (!emailRegex.test(emailPhone)) {
+        emailPhoneErrorMessageType('Please enter a valid email address!');
+        setEmailPhoneErrorMessageVisible(true);
+      } else {
+        setEmailPhoneErrorMessageVisible(false);
+        return true;
+      }
+    } else if (!phoneRegex.test(emailPhone)) {
+      emailPhoneErrorMessageType('Please enter a valid phone number!');
+      setEmailPhoneErrorMessageVisible(true);
+    } else {
+      setEmailPhoneErrorMessageVisible(false);
+      return true;
+    }
+  };
+
+  const handlesendOTPButton = async () => {
+    if (validateEmailPhone()) {
+      try {
+        const result = await user_forgot_pass({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+        });
+        if (result.data) {
+          console.log(result);
+          navigation.navigate('VerifyOTPScreen', {
+            EmailPhone: emailPhone,
+            Password: '',
+            Purpose: 'resetPassword',
+          } as any);
+        } else if (result.status !== 200) {
+          console.log('Hello', result);
+          emailPhoneErrorMessageType('Invalid details!');
+          setEmailPhoneErrorMessageVisible(true);
+        }
+      } catch (error) {
+        console.error('Error registering user:', error);
+        console.error(error);
+      }
+    } else {
+      emailPhoneErrorMessageType('Invalid input details!');
+      setEmailPhoneErrorMessageVisible(true);
+    }
+  };
+
+  const handleSkipButton = () => {
+    setNavigateToHome(true);
   };
 
   return (
@@ -54,64 +131,43 @@ const ResetPasswordScreen = () => {
           <View style={[styles.inputFieldContainer, styles.emailPhoneInput]}>
             <Text style={styles.inputFieldLebel}>Email or Phone Number</Text>
             <TextInput
-              keyboardType="phone-pad"
               inputMode="email"
+              onChangeText={handleEmailPhoneInputChange}
+              value={emailPhone}
               style={styles.inputField}
             />
           </View>
-          <View style={[styles.inputFieldContainer, styles.otpInput]}>
-            <Text style={styles.inputFieldLebel}>OTP</Text>
-            <View style={styles.otpInputFieldContainer}>
-              <TextInput
-                keyboardType="numeric"
-                inputMode="numeric"
-                maxLength={4}
-                style={styles.otpInputField}
-                selectionColor="#000"
-              />
-              <View style={styles.otpInputUnderlineContainer}>
-                <View style={styles.otpInputUnderline} />
-                <View style={styles.otpInputUnderline} />
-                <View style={styles.otpInputUnderline} />
-                <View style={styles.otpInputUnderline} />
-              </View>
-            </View>
-          </View>
-          <View style={styles.resendOtpBtnContainer}>
-            <Pressable
-              style={styles.resendOtpBtn}
-              disabled={true}
-              onPress={handleResendOtpButton}>
-              {/* TODO: Change color to '#000' if the button is active and change to gray id the button is disabled */}
-              <Text style={[styles.resendOtpLebel, {color: 'gray'}]}>
-                Resend OTP
-              </Text>
-            </Pressable>
-            {/* TODO: Change color to green if the timer is running and change to 'gray' if timer has stoppped */}
-            <Text style={[styles.resendOtpTimer, {color: 'green'}]}>
-              01 : 59
+          {emailPhoneErrorMessageVisible ? (
+            <Text style={{color: 'red', marginTop: 5}}>
+              {emailPhoneErrorMessage}
             </Text>
-          </View>
-          <View style={styles.submitBtnContainer}>
-            <TouchableOpacity style={styles.submitBtn}>
-              <Text style={styles.submitBtnLebel}>Submit</Text>
+          ) : null}
+          <View style={styles.sendOTPContainer}>
+            <TouchableOpacity
+              style={styles.sendOTP}
+              onPress={handlesendOTPButton}>
+              <Text style={styles.sendOTPLebel}>Send OTP</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.registerContainer}>
             <Text style={styles.registerBtnLebel}>Don't have an account? </Text>
-            <Pressable
-              style={styles.registerBtn}
-              onPress={() => navigation.navigate('Register')}>
-              <Text style={styles.registerBtnText}>Register</Text>
+            <Pressable style={styles.registerBtn}>
+              <Text
+                style={styles.registerBtnText}
+                onPress={() => navigation.navigate('Register')}>
+                Register
+              </Text>
             </Pressable>
           </View>
-          <Pressable
-            style={styles.otpLoginBtn}
-            onPress={() => navigation.navigate('LoginOtp')}>
-            <Text style={styles.otpLoginText}>Login with OTP</Text>
+          <Pressable style={styles.otpLoginBtn}>
+            <Text
+              style={styles.otpLoginText}
+              onPress={() => navigation.navigate('LoginOtp')}>
+              Login with OTP
+            </Text>
           </Pressable>
         </View>
-        <TouchableOpacity style={styles.skipBtn}>
+        <TouchableOpacity onPress={handleSkipButton} style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>
@@ -120,20 +176,20 @@ const ResetPasswordScreen = () => {
   );
 };
 
-export default ResetPasswordScreen;
+export default ForgotPasswordScreen;
 
 const styles = StyleSheet.create({
   container: {
     height: windowHeight,
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     backgroundColor: '#fff',
     paddingBottom: 30,
   },
   flagContainer: {
     alignItems: 'center',
-    marginTop: 30,
+    marginTop: 25,
     marginBottom: 30,
   },
   flagSection: {
@@ -163,7 +219,7 @@ const styles = StyleSheet.create({
   },
   flagGradient: {
     width: windowWidth,
-    height: windowHeight - 150,
+    height: windowHeight - 160,
     position: 'absolute',
     bottom: 0,
     borderTopLeftRadius: 100,
@@ -176,7 +232,7 @@ const styles = StyleSheet.create({
   formHeader: {
     fontSize: 24,
     fontWeight: '600',
-    marginBottom: 40,
+    marginBottom: 25,
     color: '#fff',
   },
   formContainer: {
@@ -220,10 +276,6 @@ const styles = StyleSheet.create({
   emailPhoneInput: {
     marginBottom: 5,
   },
-  otpInput: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   inputField: {
     borderBottomWidth: 1,
     borderColor: 'gray',
@@ -235,50 +287,11 @@ const styles = StyleSheet.create({
     color: 'gray',
     width: '100%',
   },
-  otpInputFieldContainer: {
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  otpInputField: {
-    color: 'gray',
-    letterSpacing: 15,
-    paddingLeft: 8,
-    margin: 0,
-    fontSize: 16,
-    padding: 0,
-    width: 115,
-  },
-  otpInputUnderlineContainer: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  otpInputUnderline: {
-    height: 1,
-    width: 15,
-    backgroundColor: 'gray',
-  },
-  resendOtpBtnContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    justifyContent: 'center',
-  },
-  resendOtpBtn: {
-    padding: 0,
-    margin: 0,
-  },
-  resendOtpLebel: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  resendOtpTimer: {
-    fontSize: 14,
-  },
-  submitBtnContainer: {
+  sendOTPContainer: {
     marginTop: 10,
     alignItems: 'center',
   },
-  submitBtn: {
+  sendOTP: {
     alignItems: 'center',
     justifyContent: 'center',
     height: 45,
@@ -287,7 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#046A38',
     borderRadius: 10,
   },
-  submitBtnLebel: {
+  sendOTPLebel: {
     color: '#fff',
     fontSize: 18,
   },
@@ -329,7 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF671F',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
+    marginTop: 20,
   },
   skipBtnLebel: {
     color: '#fff',

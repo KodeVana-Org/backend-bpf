@@ -66,7 +66,7 @@ const Accordion = ({value, type}: Props) => {
               {value.contentNested.map((val, ind) => {
                 return (
                   <View>
-                    <Text></Text>
+                    {/* <Text></Text> */}
                     <AccordionNested
                       value={val}
                       key={ind}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,23 +12,30 @@ import {
   Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {AuthParamList} from '../../navigator/AuthNavigator';
 import EyeClose from '../../assets/icons/EyeClose';
 import EyeOpen from '../../assets/icons/EyeOpen';
+import {AppContext} from '../../navigator/AppContext';
+import {set_password} from '../../api/auth_api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface Props {
+  route: {
+    params: {
+      EmailPhone: string;
+    };
+  };
+}
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const RegisterScreen = () => {
-  const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
-
+const RegisterScreen = ({route}: Props) => {
+  const emailPhone = route.params.EmailPhone;
   const [hidePassword, setHidePassword] = useState(true);
   const toggleHidePassword = () => {
     setHidePassword(!hidePassword);
   };
-
+  const {setNavigateToHome} = useContext(AppContext);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -54,8 +61,8 @@ const RegisterScreen = () => {
     if (password === '') {
       errorMessageType('Password is required!');
       setPasswordErrorMessageVisible(true);
-    } else if (password.length < 5) {
-      errorMessageType('Should be of min 5 character!');
+    } else if (password.length < 7) {
+      errorMessageType('Should be of min 7 character!');
       setPasswordErrorMessageVisible(true);
     } else if (password.length > 32) {
       errorMessageType('Should be of max 32 character!');
@@ -73,12 +80,46 @@ const RegisterScreen = () => {
     }
   };
 
-  const handleSaveButton = () => {
+  const handleSaveButton = async () => {
     if (validatePassword()) {
-      // TODO: Check if credential already exit and redirect to OTPAuthenthicationScreen;
-      console.log('Yay! Form Submitted Successfully');
-      navigation.navigate('VerifyOTPScreen');
+      try {
+        console.log(password);
+        const result = await set_password({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+          password: password,
+        });
+        if (result.data) {
+          console.log('Logged in successfully', result.data.token);
+          handleNavigateToHome();
+          console.log(result.data.token);
+          storeToken(result.data.token);
+        } else if (result.status !== 200) {
+          console.log(result);
+          errorMessageType('Invalid input details!');
+          setPasswordErrorMessageVisible(true);
+        }
+      } catch (error) {
+        console.log('Error logging user:', error);
+        console.log(error);
+      }
+    } else {
+      errorMessageType('Invalid input details!');
+      setPasswordErrorMessageVisible(true);
     }
+  };
+
+  /// Store user login token
+  const storeToken = async (token: string) => {
+    try {
+      await AsyncStorage.setItem('AccessToken', token);
+      console.log('Token stored successfully:', token);
+    } catch (error) {
+      console.log('Error storing token:', error);
+    }
+  };
+
+  const handleNavigateToHome = () => {
+    setNavigateToHome(true);
   };
 
   return (

@@ -124,6 +124,10 @@ exports.VerifyOTP = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "OTP is invalid",
+        data: {
+          message:message
+        }
+       
       });
     }
 
@@ -302,7 +306,7 @@ exports.loginWithOtp = async (req, res) => {
     );
 
     return res.status(200).json({
-      otp,
+      data: { otp },
       message: "OTP sent successfully. Please verify and login.",
     });
   } catch (error) {
@@ -341,16 +345,17 @@ exports.verifyOtpAndLogin = async (req, res) => {
 
     if (!userOTP || userOTP.otp !== otp || (!userOTP.email && !userOTP.phone)) {
       return res.status(400).json({ error: "Invalid OTP or email/phone" });
+      console.log('Wrong OTP');
     }
-
-    const otpValidityDuration = 2 * 60 * 1000; // 5 minutes in milliseconds
+    
+    const otpValidityDuration = 3 * 60 * 1000; // 5 minutes in milliseconds
     const otpTimestamp = userOTP.createdAt.getTime();
     const currentTimestamp = Date.now();
-
+    
     if (currentTimestamp - otpTimestamp > otpValidityDuration) {
       await User.updateOne({ _id: userOTP._id }, { $unset: { otp: 1 } });
-
-      return res.status(400).json({ error: "OTP expired" });
+      return res.status(404).json({ error: "OTP expired" });
+      console.log('OTP expired');
     }
 
     await User.updateOne({ _id: userOTP._id }, { $unset: { otp: 1 } });

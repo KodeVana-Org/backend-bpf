@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, ScrollView, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, ScrollView, View, Image} from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -12,8 +12,10 @@ import {SystemBars} from 'react-native-bars';
 import Drawer from '../../components/Drawer/CustomSideDrawer';
 import Header from '../../components/Header/Header';
 import FAB from '../../components/FloatingActionButton/FAB';
+import {get_post} from '../../api/post_api';
 
 const PostScreen = () => {
+  const [post, setPost] = useState([]);
   const active = useSharedValue(false);
   const drawerWidth = useSharedValue(1000);
   const drawerTranslateX = useSharedValue(-drawerWidth.value);
@@ -30,6 +32,25 @@ const PostScreen = () => {
     };
   });
 
+  useEffect(() => {
+    getPost();
+  }, []);
+
+  const getPost = async () => {
+    try {
+      const result = await get_post();
+      if (result.data) {
+        setPost(result.posts.postImages);
+        console.log('Data fetched successfully:', result);
+      } else if (result.status !== 200) {
+        console.log('Error during accessing posts', result);
+      }
+    } catch (error) {
+      console.error('Error logging user:', error);
+      console.error(error);
+    }
+  };
+
   return (
     <SafeAreaProvider>
       <Drawer
@@ -43,7 +64,15 @@ const PostScreen = () => {
           {/* If you're not using react-native-bars, you can remove SystemBars */}
           <SystemBars animated={true} barStyle={'light-content'} />
           <Animated.View style={[styles.container, animatedStyle]}>
-            <Text>PostScreen</Text>
+            <View>
+              {post.map((image, index) => (
+                <Image
+                  key={index}
+                  source={{uri: image}}
+                  style={styles.postImage}
+                />
+              ))}
+            </View>
           </Animated.View>
         </GestureHandlerRootView>
       </ScrollView>
@@ -59,5 +88,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingBottom: 750,
+  },
+  postImage: {
+    height: 200,
+    width: 200,
   },
 });

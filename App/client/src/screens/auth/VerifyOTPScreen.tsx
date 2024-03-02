@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,13 +11,18 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
-import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-import {verify_otp} from '../../api/auth_api';
+import {
+  forgot_pass_otp,
+  verify_login_otp,
+  verify_register_otp,
+} from '../../api/auth_api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AppContext} from '../../navigator/AppContext';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {AuthParamList} from '../../navigator/AuthNavigator';
+import {useNavigation} from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -27,16 +32,17 @@ interface Props {
     params: {
       EmailPhone: string;
       Password: string;
+      Purpose: 'register' | 'login' | 'resetPassword';
     };
   };
 }
 
 const VerifyOTPScreen = ({route}: Props) => {
-  // const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
-  const homeNavigation = useNavigation<BottomTabParamList>();
-
+  const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
+  const {setNavigateToHome} = useContext(AppContext);
   const emailPhone = route.params.EmailPhone;
   const password = route.params.Password;
+  const purpose = route.params.Purpose;
   const [otp, setOtp] = useState('');
   const [otpErrorMessage, setOtpErrorMessage] = useState('');
   const [otpErrorMessageVisible, setOtpErrorMessageVisible] = useState(false);
@@ -70,32 +76,103 @@ const VerifyOTPScreen = ({route}: Props) => {
     // TODO: Activate the button if the timer is over and when user clicks on the button sesend another OTP and disable the button again for the defined amount of time;
   };
 
-  const handleSubmitButton = async () => {
+  // Pass new user registration data to the server
+  const handleSubmitButton = () => {
     if (validateOtp()) {
-      try {
-        const result = await verify_otp({
-          emailPhone: emailPhone.toLocaleLowerCase(),
-          password: password,
-          otp: otp,
-        });
-        if (result.data) {
-          AsyncStorage.setItem('AccessToken', result.data.token);
-          otpErrorMessageType('OTP verified successfully');
-          console.log('OTP verified successfully');
-          // TODO: Redirect to HomeScreen
-        } else if (result.status !== 200) {
-          otpErrorMessageType('Invalid OTP!');
-          setOtpErrorMessageVisible(true);
-        }
-        // navigation.navigate('HomeScreen');
-      } catch (error) {
-        console.error('Error verifying OTP:', error);
-        console.error(error);
+      if (purpose === 'register') {
+        RegisterUser();
+      } else if (purpose === 'login') {
+        LoginUser();
+      } else {
+        resetUserPassword();
       }
     } else {
       otpErrorMessageType('Invalid OTP!');
       setOtpErrorMessageVisible(true);
     }
+  };
+
+  // Pass => register user data
+  const RegisterUser = async () => {
+    try {
+      const result = await verify_register_otp({
+        emailPhone: emailPhone.toLocaleLowerCase(),
+        password: password,
+        otp: otp,
+      });
+      if (result.data.token) {
+        otpErrorMessageType('OTP verified successfully');
+        storeToken(result.data.token);
+        handleNavigateToHome();
+      } else if (result.status !== 200) {
+        otpErrorMessageType('Invalid OTP!');
+        setOtpErrorMessageVisible(true);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      console.error(error);
+    }
+  };
+
+  // Pass => login user data
+  const LoginUser = async () => {
+    try {
+      const result = await verify_login_otp({
+        emailPhone: emailPhone.toLocaleLowerCase(),
+        otp: otp,
+      });
+      if (result.data) {
+        otpErrorMessageType('OTP verified successfully');
+        storeToken(result.data.token);
+        handleNavigateToHome();
+        return true;
+      } else if (result.status !== 200) {
+        otpErrorMessageType('Invalid OTP!');
+        setOtpErrorMessageVisible(true);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      console.error(error);
+      return false;
+    }
+  };
+
+  // Pass => reset password user data
+  const resetUserPassword = async () => {
+    try {
+      const result = await forgot_pass_otp({
+        emailPhone: emailPhone.toLocaleLowerCase(),
+        otp: otp,
+      });
+      if (result.data) {
+        otpErrorMessageType('OTP verified successfully');
+        navigation.navigate('SetPassword', {
+          EmailPhone: emailPhone,
+        } as any);
+        return true;
+      } else if (result.status !== 200) {
+        otpErrorMessageType('Invalid OTP!');
+        setOtpErrorMessageVisible(true);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      console.error(error);
+      return false;
+    }
+  };
+
+  // Store user login token
+  const storeToken = async (token: string) => {
+    try {
+      await AsyncStorage.setItem('AccessToken', token);
+      console.log('Token stored successfully:', token);
+    } catch (error) {
+      console.error('Error storing token:', error);
+    }
+  };
+
+  const handleNavigateToHome = () => {
+    setNavigateToHome(true);
   };
 
   return (
@@ -170,9 +247,7 @@ const VerifyOTPScreen = ({route}: Props) => {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => homeNavigation.Home}
-          style={styles.skipBtn}>
+        <TouchableOpacity onPress={handleNavigateToHome} style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>

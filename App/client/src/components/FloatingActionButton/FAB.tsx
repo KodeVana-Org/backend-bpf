@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -9,8 +9,11 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import PostIcon from '../../assets/icons/Gallery';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AppContext} from '../../navigator/AppContext'; // TODO: Remove this line
 
 const FAB = () => {
+  const {setNavigateToHome} = useContext(AppContext); // TODO: Remove this line
   const width = useSharedValue(60);
   const height = useSharedValue(60);
   const borderRadius = useSharedValue(50);
@@ -50,6 +53,12 @@ const FAB = () => {
     };
   });
 
+  // TODO: Remove this function
+  const removeToken = async () => {
+    await AsyncStorage.removeItem('AccessToken');
+    setNavigateToHome(false);
+  };
+
   return (
     <View style={{flex: 1}}>
       <Animated.View style={[styles.container, animatedStyle]}>
@@ -66,13 +75,16 @@ const FAB = () => {
             />
           </Animated.View>
         </Pressable>
-        <View style={styles.contentContainer}>
+        <Pressable onPress={removeToken} style={styles.buttonContainer}>
           <View style={styles.iconContainer}>
             <PostIcon height={25} width={25} fill="white" />
           </View>
-          <Text style={styles.text}>Upload Post</Text>
-        </View>
-        <View style={styles.contentContainer}>
+          {/* TODO: Remove this line */}
+          <Text style={styles.text}>Remove Token</Text>
+          {/* TODO: Uncomment this line */}
+          {/* <Text style={styles.text}>Upload Post</Text> */}
+        </Pressable>
+        <Pressable style={styles.buttonContainer}>
           <View style={styles.iconContainer}>
             <Image
               source={require('../../assets/icons/FileIcon.png')}
@@ -80,8 +92,8 @@ const FAB = () => {
             />
           </View>
           <Text style={styles.text}>Edit Banner</Text>
-        </View>
-        <View style={styles.contentContainer}>
+        </Pressable>
+        <Pressable style={styles.buttonContainer}>
           <View style={styles.iconContainer}>
             <Image
               source={require('../../assets/icons/PenIcon.png')}
@@ -89,7 +101,7 @@ const FAB = () => {
             />
           </View>
           <Text style={styles.text}>Edit Members</Text>
-        </View>
+        </Pressable>
       </Animated.View>
     </View>
   );
@@ -116,7 +128,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
   },
-  contentContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',

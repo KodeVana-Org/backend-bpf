@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
-// import OnboardingScreen from '../screens/OnboardingScreen';
 import AuthNavigator from './AuthNavigator';
 import BottomTabNavigator from './BottomTabNavigator';
 import SideDrawerNavigator from './DrawerNavigator';
+import SplashScreen from '../screens/SplashScreen';
 import JoinScreen from '../screens/JoinScreen';
 import DonateScreen from '../screens/DonateScreen';
 import NotificationScreen from '../screens/NotificationScreen';
@@ -12,7 +12,7 @@ import EditMemberScreen from '../screens/admin/EditMemberScreen';
 import {AppContext} from './AppContext';
 
 export type RootStackParamList = {
-  Onboarding: undefined;
+  SplashScreen: undefined;
   AuthNavigator: undefined;
   BottomTabNavigator: undefined;
   SideDrawerNavigator: undefined;
@@ -25,64 +25,36 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
+  const [showSplash, setShowSplash] = useState(true);
+  const {navigateToHome} = useContext(AppContext);
   const [tokenExist, setTokenExist] = useState(false);
 
-  // const [isAppFirstLaunched, setIsAppFirstLaunched] = useState<boolean | null>(
-  //   null,
-  // );
-
-  // useEffect(() => {
-  //   const checkAppFirstLaunch = async () => {
-  //     try {
-  //       const appData = await AsyncStorage.getItem('isAppFirstLaunched');
-  //       if (appData === null) {
-  //         setIsAppFirstLaunched(true);
-  //         AsyncStorage.setItem('isAppFirstLaunched', 'false');
-  //       } else {
-  //         setIsAppFirstLaunched(false);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error checking app first launch:', error);
-  //     }
-  //   };
-
-  //   checkAppFirstLaunch();
-  // }, []);
-
-  // if (isAppFirstLaunched === null) {
-  //   // Loading state, can render a loading spinner or placeholder
-  //   return null;
-  // }
-
   useEffect(() => {
+    handleGetToken();
     setTimeout(() => {
-      handleGetToken();
-    }, 2000);
-  });
+      setShowSplash(false);
+    }, 1000);
+  }, []);
 
   const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('AccessToken');
-    if (dataToken) {
+    const token = await AsyncStorage.getItem('AccessToken');
+    // console.log(token);
+    if (token) {
       setTokenExist(true);
     } else {
       setTokenExist(false);
     }
   };
 
-  const {skippedAuth} = useContext(AppContext);
-
   return (
-    <Stack.Navigator
-      // initialRouteName={isAppFirstLaunched ? 'OnboardingScreen' : 'Main'}
-      initialRouteName={tokenExist ? 'BottomTabNavigator' : 'AuthNavigator'}
-      screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
-      {/* <Stack.Screen
-        name="Onboarding"
-        component={OnboardingScreen}
-        options={{headerShown: false}}
-      /> */}
-
-      {skippedAuth ? (
+    <Stack.Navigator screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
+      {showSplash ? (
+        <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          options={{headerShown: false}}
+        />
+      ) : navigateToHome || tokenExist ? (
         <Stack.Screen
           name="BottomTabNavigator"
           component={BottomTabNavigator}
@@ -95,7 +67,6 @@ const RootNavigator = () => {
           options={{headerShown: false}}
         />
       )}
-
       <Stack.Screen
         name="EditMemberScreen"
         component={EditMemberScreen}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,13 +16,15 @@ import ChevronLeftLight from '../../assets/icons/ChevronLeftLight';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
+import {AppContext} from '../../navigator/AppContext';
+import {user_login_otp} from '../../api/auth_api';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const LoginOtpScreen = () => {
   const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
-
+  const {setNavigateToHome} = useContext(AppContext);
   const [emailPhone, setEmailPhone] = useState('');
   const [emailPhoneErrorMessage, setEmailPhoneErrorMessage] = useState('');
   const [emailPhoneErrorMessageVisible, setEmailPhoneErrorMessageVisible] =
@@ -48,7 +50,11 @@ const LoginOtpScreen = () => {
     } else if (emailPhone.length > 32) {
       emailPhoneErrorMessageType('Should be of max 32 character!');
       setEmailPhoneErrorMessageVisible(true);
-    } else if (/[a-zA-Z]/g.test(emailPhone) || emailPhone.includes('@')) {
+    } else if (
+      /[a-zA-Z]/g.test(emailPhone) ||
+      emailPhone.includes('@') ||
+      emailPhone.charAt(0) === '@'
+    ) {
       if (!emailRegex.test(emailPhone)) {
         emailPhoneErrorMessageType('Please enter a valid email address!');
         setEmailPhoneErrorMessageVisible(true);
@@ -65,12 +71,37 @@ const LoginOtpScreen = () => {
     }
   };
 
-  const handlesendOTPButton = () => {
+  // Pass user data to the server
+  const handlesendOTPButton = async () => {
     if (validateEmailPhone()) {
-      // TODO: Check if Email or phone exit, if exist =
-      console.log('Yay! Entered a valid email address');
-      navigation.navigate('VerifyOTPScreen');
+      try {
+        const result = await user_login_otp({
+          emailPhone: emailPhone.toLocaleLowerCase(),
+        });
+        if (result.data) {
+          console.log('OTP sent successfully:', result);
+          navigation.navigate('VerifyOTPScreen', {
+            EmailPhone: emailPhone,
+            Password: '',
+            Purpose: 'login',
+          } as any);
+        } else if (result.status !== 200) {
+          console.log(result);
+          emailPhoneErrorMessageType('Invalid input details!');
+          setEmailPhoneErrorMessageVisible(true);
+        }
+      } catch (error) {
+        console.error('Error logging user:', error);
+        console.error(error);
+      }
+    } else {
+      emailPhoneErrorMessageType('Invalid input details!');
+      setEmailPhoneErrorMessageVisible(true);
     }
+  };
+
+  const handleSkipButton = () => {
+    setNavigateToHome(true);
   };
 
   return (
@@ -105,12 +136,12 @@ const LoginOtpScreen = () => {
               value={emailPhone}
               style={styles.inputField}
             />
+            {emailPhoneErrorMessageVisible ? (
+              <Text style={{color: 'red', marginTop: 5}}>
+                {emailPhoneErrorMessage}
+              </Text>
+            ) : null}
           </View>
-          {emailPhoneErrorMessageVisible ? (
-            <Text style={{color: 'red', marginTop: 5}}>
-              {emailPhoneErrorMessage}
-            </Text>
-          ) : null}
           <View style={styles.sendOTPContainer}>
             <TouchableOpacity
               style={styles.sendOTP}
@@ -128,15 +159,8 @@ const LoginOtpScreen = () => {
               </Text>
             </Pressable>
           </View>
-          <Pressable style={styles.otpLoginBtn}>
-            <Text
-              style={styles.otpLoginText}
-              onPress={() => navigation.navigate('LoginOtp')}>
-              Login with OTP
-            </Text>
-          </Pressable>
         </View>
-        <TouchableOpacity style={styles.skipBtn}>
+        <TouchableOpacity onPress={handleSkipButton} style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>

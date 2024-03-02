@@ -1,22 +1,22 @@
 import React, {createContext, useState} from 'react';
 
 interface AppContextType {
-  skippedAuth: boolean;
-  setSkippedAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  navigateToHome: boolean;
+  setNavigateToHome: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const AppContext = createContext<AppContextType>({
-  skippedAuth: false,
-  setSkippedAuth: () => {},
+  navigateToHome: false,
+  setNavigateToHome: () => {},
 });
 
 export const AppContextProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
-  const [skippedAuth, setSkippedAuth] = useState<boolean>(false);
+  const [navigateToHome, setNavigateToHome] = useState<boolean>(false);
 
   return (
-    <AppContext.Provider value={{skippedAuth, setSkippedAuth}}>
+    <AppContext.Provider value={{navigateToHome, setNavigateToHome}}>
       {children}
     </AppContext.Provider>
   );

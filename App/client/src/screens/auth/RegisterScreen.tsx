@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,22 +19,20 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {AuthParamList} from '../../navigator/AuthNavigator';
 import EyeClose from '../../assets/icons/EyeClose';
 import EyeOpen from '../../assets/icons/EyeOpen';
-// import {BottomTabParamList} from '../../navigator/BottomTabNavigator';
-// import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
-// import HomeScreen from '../bottomTab/HomeScreen';
+import {AppContext} from '../../navigator/AppContext';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const RegisterScreen = () => {
   const navigation = useNavigation<StackNavigationProp<AuthParamList>>();
-  // const homeNavigation = useNavigation<BottomTabBarProps<BottomTabParamList>>();
 
   const [hidePassword, setHidePassword] = useState(true);
   const toggleHidePassword = () => {
     setHidePassword(!hidePassword);
   };
 
+  const {setNavigateToHome} = useContext(AppContext);
   const [emailPhone, setEmailPhone] = useState('');
   const [password, setPassword] = useState('');
   const [emailPhoneErrorMessage, setEmailPhoneErrorMessage] = useState('');
@@ -73,7 +71,11 @@ const RegisterScreen = () => {
       emailPhoneErrorMessageType('Should be of max 32 character!');
       validatePassword();
       setEmailPhoneErrorMessageVisible(true);
-    } else if (/[a-zA-Z]/g.test(emailPhone) || emailPhone.includes('@')) {
+    } else if (
+      /[a-zA-Z]/g.test(emailPhone) ||
+      emailPhone.includes('@') ||
+      emailPhone.charAt(0) === '@'
+    ) {
       if (!emailRegex.test(emailPhone)) {
         emailPhoneErrorMessageType('Please enter a valid email address!');
         validatePassword();
@@ -97,8 +99,8 @@ const RegisterScreen = () => {
     if (password === '') {
       passwordErrorMessageType('This field is required!');
       setPasswordErrorMessageVisible(true);
-    } else if (password.length < 5) {
-      passwordErrorMessageType('Should be of min 5 character!');
+    } else if (password.length < 7) {
+      passwordErrorMessageType('Should be of min 7 character!');
       setPasswordErrorMessageVisible(true);
     } else if (password.length > 32) {
       passwordErrorMessageType('Should be of max 32 character!');
@@ -120,6 +122,7 @@ const RegisterScreen = () => {
           navigation.navigate('VerifyOTPScreen', {
             EmailPhone: emailPhone,
             Password: password,
+            Purpose: 'register',
           } as any);
         } else if (result.status !== 200) {
           console.log(result);
@@ -136,6 +139,10 @@ const RegisterScreen = () => {
       setEmailPhoneErrorMessageVisible(true);
       setPasswordErrorMessageVisible(true);
     }
+  };
+
+  const handleSkipButton = () => {
+    setNavigateToHome(true);
   };
 
   return (
@@ -219,9 +226,7 @@ const RegisterScreen = () => {
             </Pressable>
           </View>
         </View>
-        <TouchableOpacity
-          // onPress={() => navigation.navigate(HomeScreen)}
-          style={styles.skipBtn}>
+        <TouchableOpacity onPress={handleSkipButton} style={styles.skipBtn}>
           <Text style={styles.skipBtnLebel}>Skip</Text>
           <ChevronLeftLight width={16} height={16} style={styles.skipIcon} />
         </TouchableOpacity>
