@@ -4,7 +4,7 @@ const lognRoute = require("../controllers/login.js");
 const userRoute = require("../controllers/Register.js");
 const profileRoute = require("../profile/me.js");
 const profilePicture = require("../controllers/updateProfilePic.js");
-
+const auth = require('../profile/auth.js')
 const verifyToken = require("../utils/verifyToken.js");
 const DeleteAccount = require("../profile/deleteAccount.js");
 const ForgotPass = require("../controllers/forgotPassword.js");
@@ -23,6 +23,7 @@ router.post("/reset-password", ForgotPass.ResetPassword);
 router.post("/reset-pass", ForgotPass.ResetPass);
 router.post("/verify-otp", userRoute.VerifyOTP);
 router.get("/me", verifyToken, profileRoute.Profile);
+router.get("/auth", verifyToken,auth.auth );
 router.post("/delete-account", verifyToken, DeleteAccount.DeleteAccount);
 router.post("/cancel-delete", verifyToken, DeleteAccount.CancelDeletion);
 router.post("/join", joinMember.Join);

@@ -1,53 +1,53 @@
 import React from 'react';
 import {
-  DrawerScreenProps,
+  // DrawerScreenProps,
   createDrawerNavigator,
 } from '@react-navigation/drawer';
-import CustomSideDrawer from '../components/Drawer/CustomSideDrawer.tsx';
-import BTCHistoryScreen from '../screens/drawer/BTCHistoryScreen.tsx';
-import MissionScreen from '../screens/drawer/MissionScreen.tsx';
-import AchievementScreen from '../screens/drawer/AchievementScreen.tsx';
-import VissionScreen from '../screens/drawer/VissionScreen.tsx';
-import CommitteeScreen from '../screens/drawer/CommitteeScreen.tsx';
-import GalleryScreen from '../screens/drawer/GalleryScreen.tsx';
-import AboutScreen from '../screens/drawer/AboutScreen.tsx';
+import BottomTabNavigator from './BottomTabNavigator.tsx';
+import {
+  ProfileScreen,
+  HistoryScreen,
+  CommitteeScreen,
+  AchievementScreen,
+  ConstitutionScreen,
+  SixthSheduleScreen,
+  VissionScreen,
+  GalleryScreen,
+  AboutScreen,
+} from '../screens';
+import CustomDrawer from '../components/Drawer/CustomDrawer.tsx';
 
 export type DrawerParamList = {
-  navigate(arg0: string): void;
+  BottomTabNavigator: undefined;
+  Profile: undefined;
   History: undefined;
-  Mission: undefined;
-  Achievement: undefined;
-  Vission: undefined;
   Committee: undefined;
+  Achievement: undefined;
+  Constitution: undefined;
+  SixthShedule: undefined;
+  Vission: undefined;
   Gallery: undefined;
   About: undefined;
 };
 
-const CustomSideDrawers = () => {
-  return (
-    <CustomSideDrawer
-      active={undefined}
-      translateX={undefined}
-      drawerWidth={undefined}
-    />
-  );
-};
-
 const DrawerNavigator = () => {
-  const Stack = createDrawerNavigator<DrawerParamList>();
+  const Drawer = createDrawerNavigator<DrawerParamList>();
 
   return (
-    <Stack.Navigator
-      drawerContent={CustomSideDrawers}
+    <Drawer.Navigator
+      drawerContent={props => <CustomDrawer {...props} />}
       screenOptions={{headerShown: false}}>
-      <Stack.Screen name="History" component={BTCHistoryScreen} />
-      <Stack.Screen name="Mission" component={MissionScreen} />
-      <Stack.Screen name="Achievement" component={AchievementScreen} />
-      <Stack.Screen name="Vission" component={VissionScreen} />
-      <Stack.Screen name="Committee" component={CommitteeScreen} />
-      <Stack.Screen name="Gallery" component={GalleryScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
-    </Stack.Navigator>
+      <Drawer.Screen name="BottomTabNavigator" component={BottomTabNavigator} />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="History" component={HistoryScreen} />
+      <Drawer.Screen name="Committee" component={CommitteeScreen} />
+      <Drawer.Screen name="Achievement" component={AchievementScreen} />
+      <Drawer.Screen name="Constitution" component={ConstitutionScreen} />
+      <Drawer.Screen name="SixthShedule" component={SixthSheduleScreen} />
+      <Drawer.Screen name="Vission" component={VissionScreen} />
+      <Drawer.Screen name="Gallery" component={GalleryScreen} />
+      <Drawer.Screen name="About" component={AboutScreen} />
+    </Drawer.Navigator>
   );
 };
 

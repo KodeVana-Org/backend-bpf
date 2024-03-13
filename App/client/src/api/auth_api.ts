@@ -140,3 +140,18 @@ export const set_password = async (data: SetPassData): Promise<any> => {
     return error.response.data;
   }
 };
+
+/////////////////** USER TOKEN VERIFICATION **/////////////////
+interface UserData {
+  headers: any;
+}
+
+export const verify_Token = async (data: UserData): Promise<any> => {
+  try {
+    const response = await ApiManager.get('user/auth', data);
+    return response.data;
+  } catch (error: any) {
+    console.log('Error occurred during accessing gallery:', error.message);
+    return error.response.data;
+  }
+};

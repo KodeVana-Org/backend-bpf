@@ -119,7 +119,7 @@ const RegisterScreen = () => {
         });
         if (result.data) {
           console.log(result);
-          navigation.navigate('VerifyOTPScreen', {
+          navigation.navigate('VerifyOTP', {
             EmailPhone: emailPhone,
             Password: password,
             Purpose: 'register',

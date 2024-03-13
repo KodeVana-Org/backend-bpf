@@ -2,7 +2,10 @@
 http://localhost:6969/post/create-post
 http://localhost:6969/post/get-all-post
 http://localhost:6969/post/get-post-by-admin
-http://localhost:6969/post/delete-post/123
+http://localhost:6969/post/delete-post
+
+http://localhost:6969/youtube/upload-gallery
+http://localhost:6969/youtube/get-gallery
 
 =>login
 http://localhost:6969/user/login

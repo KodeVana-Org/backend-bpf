@@ -80,7 +80,7 @@ const ForgotPasswordScreen = () => {
         });
         if (result.data) {
           console.log(result);
-          navigation.navigate('VerifyOTPScreen', {
+          navigation.navigate('VerifyOTP', {
             EmailPhone: emailPhone,
             Password: '',
             Purpose: 'resetPassword',

@@ -221,7 +221,7 @@ const LoginPassScreen = () => {
           </View>
           <Pressable
             style={styles.forgotPassBtn}
-            onPress={() => navigation.navigate('ForgotPassword')}>
+            onPress={() => navigation.navigate('ForgotPass')}>
             <Text style={styles.forgotPassLebel}>Forgot Password?</Text>
           </Pressable>
           <View style={styles.loginBtnContainer}>

@@ -11,7 +11,7 @@ const eventRotue = require("./src/router/adminRoute/eventRoute.js");
 const achivementRoute = require("./src/router/adminRoute/achievementRoute.js");
 const historyRotue = require("./src/router/historyRoute.js");
 const usrRoute = require("./src/router/adminRoute/userRoute.js");
-
+const constitutionRoute = require("./src/router/adminRoute/constitutionRoute.js");
 // Middleware to log requests
 app.use(express.json());
 app.use(cors());
@@ -23,6 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/constitute", constitutionRoute);
 app.use("/youtube", videosRoutes);
 app.use("/user", userRoute);
 app.use("/pay", paymentRoute);

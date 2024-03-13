@@ -8,7 +8,7 @@ const NotificationScreen = () => {
   return (
     <SafeAreaProvider style={styles.container}>
       <Animated.View style={[styles.container]}>
-        <NavHeader />
+        <NavHeader title={'Notifications'} />
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={{color: '#000'}}>NotificationScreen</Text>
         </ScrollView>

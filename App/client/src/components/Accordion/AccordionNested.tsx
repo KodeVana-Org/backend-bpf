@@ -77,17 +77,17 @@ export default Accordion;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#252d3a',
+    backgroundColor: '#dedede',
     marginHorizontal: 10,
     marginVertical: 10,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#0F56B3',
+    borderColor: '#FF671F',
     overflow: 'hidden',
   },
   textTitle: {
     fontSize: 16,
-    color: 'white',
+    color: '#000',
   },
   titleContainer: {
     padding: 20,
@@ -102,10 +102,10 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    backgroundColor: '#1d2733',
+    backgroundColor: '#FFF',
   },
   textContent: {
     fontSize: 14,
-    color: 'white',
+    color: 'gray',
   },
 });

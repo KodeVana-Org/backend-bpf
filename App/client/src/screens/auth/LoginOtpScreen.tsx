@@ -80,7 +80,7 @@ const LoginOtpScreen = () => {
         });
         if (result.data) {
           console.log('OTP sent successfully:', result);
-          navigation.navigate('VerifyOTPScreen', {
+          navigation.navigate('VerifyOTP', {
             EmailPhone: emailPhone,
             Password: '',
             Purpose: 'login',

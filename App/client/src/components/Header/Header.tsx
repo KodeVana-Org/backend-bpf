@@ -6,14 +6,13 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigator/RootNavigator';
-import {SharedValue} from 'react-native-reanimated';
 
 type HeaderProps = {
-  active: SharedValue<boolean>;
   title: string;
+  drawerNavigation: any;
 };
 
-const Header = ({active, title}: HeaderProps) => {
+const Header = ({drawerNavigation, title}: HeaderProps) => {
   const insets = useSafeAreaInsets();
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -28,16 +27,14 @@ const Header = ({active, title}: HeaderProps) => {
       ]}>
       <View style={styles.leftHeader}>
         <TouchableOpacity
-          onPress={() => {
-            active.value = true;
-          }}
+          onPress={() => drawerNavigation.openDrawer()}
           style={styles.menuIcon}>
           <MenuIcon fill="#fff" width={24} height={24} />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('NotificationScreen')}
+        onPress={() => navigation.navigate('Notification')}
         style={styles.notificationIcon}>
         <BellIcon fill="#fff" width={24} height={24} />
       </TouchableOpacity>

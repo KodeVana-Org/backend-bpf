@@ -1,25 +1,22 @@
 import React, {useContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import AuthNavigator from './AuthNavigator';
-import BottomTabNavigator from './BottomTabNavigator';
-import SideDrawerNavigator from './DrawerNavigator';
-import SplashScreen from '../screens/SplashScreen';
-import JoinScreen from '../screens/JoinScreen';
-import DonateScreen from '../screens/DonateScreen';
-import NotificationScreen from '../screens/NotificationScreen';
-import EditMemberScreen from '../screens/admin/EditMemberScreen';
+
+import DrawerNavigator from './DrawerNavigator';
+import {SplashScreen, NotificationScreen} from '../screens';
 import {AppContext} from './AppContext';
 
 export type RootStackParamList = {
-  SplashScreen: undefined;
   AuthNavigator: undefined;
-  BottomTabNavigator: undefined;
-  SideDrawerNavigator: undefined;
-  JoinScreen: undefined;
-  DonateScreen: undefined;
-  NotificationScreen: undefined;
-  EditMemberScreen: undefined;
+  DrawerNavigator: undefined;
+  Splash: undefined;
+  Join: undefined;
+  Donate: undefined;
+  Notification: undefined;
+  EditMember: undefined;
+  EditBanner: undefined;
+  UploadPost: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -38,7 +35,7 @@ const RootNavigator = () => {
 
   const handleGetToken = async () => {
     const token = await AsyncStorage.getItem('AccessToken');
-    // console.log(token);
+    console.log(token);
     if (token) {
       setTokenExist(true);
     } else {
@@ -47,51 +44,15 @@ const RootNavigator = () => {
   };
 
   return (
-    <Stack.Navigator screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       {showSplash ? (
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          options={{headerShown: false}}
-        />
+        <Stack.Screen name="Splash" component={SplashScreen} />
       ) : navigateToHome || tokenExist ? (
-        <Stack.Screen
-          name="BottomTabNavigator"
-          component={BottomTabNavigator}
-          options={{headerShown: false}}
-        />
+        <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
       ) : (
-        <Stack.Screen
-          name="AuthNavigator"
-          component={AuthNavigator}
-          options={{headerShown: false}}
-        />
+        <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
       )}
-      <Stack.Screen
-        name="EditMemberScreen"
-        component={EditMemberScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SideDrawerNavigator"
-        component={SideDrawerNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="JoinScreen"
-        component={JoinScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="DonateScreen"
-        component={DonateScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="NotificationScreen"
-        component={NotificationScreen}
-        options={{headerShown: false}}
-      />
+      <Stack.Screen name="Notification" component={NotificationScreen} />
     </Stack.Navigator>
   );
 };

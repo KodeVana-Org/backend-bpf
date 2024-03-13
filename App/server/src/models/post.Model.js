@@ -8,14 +8,17 @@ const postSchema = new mongoose.Schema(
       required: true,
     },
     postImages: {
-      type: [String],
+      type: String,
       required: true,
     },
     postTitles: {
       type: String,
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  { timestamp: true },
 );
 
 const Post = mongoose.model("Post", postSchema);

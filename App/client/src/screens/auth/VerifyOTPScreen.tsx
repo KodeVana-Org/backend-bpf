@@ -146,7 +146,7 @@ const VerifyOTPScreen = ({route}: Props) => {
       });
       if (result.data) {
         otpErrorMessageType('OTP verified successfully');
-        navigation.navigate('SetPassword', {
+        navigation.navigate('SetPass', {
           EmailPhone: emailPhone,
         } as any);
         return true;

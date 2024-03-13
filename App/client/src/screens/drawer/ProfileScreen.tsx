@@ -1,19 +1,17 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text} from 'react-native';
+import {ScrollView, StyleSheet, View, Text, SafeAreaView} from 'react-native';
 import NavHeader from '../../components/Header/NavHeader';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Animated from 'react-native-reanimated';
 
 const ProfileScreen = () => {
   return (
-    <SafeAreaProvider style={styles.container}>
-      <Animated.View style={[styles.container]}>
-        <NavHeader />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <NavHeader title={'My Profile'} />
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={{color: '#000'}}>ProfileScreen</Text>
         </ScrollView>
-      </Animated.View>
-    </SafeAreaProvider>
+      </View>
+    </SafeAreaView>
   );
 };
 

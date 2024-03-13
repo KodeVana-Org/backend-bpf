@@ -1,8 +1,6 @@
 import {
   StyleSheet,
   SafeAreaView,
-  // Platform,
-  // StatusBar,
   View,
 } from 'react-native';
 import React from 'react';
@@ -11,16 +9,16 @@ import CustomImageCarousal from './CustomImageCarousal';
 const ImageCarousal = () => {
   const data = [
     {
-      image: require('../../assets/images/CorouselImage1.jpg'),
+      image: require('../../assets/images/BannerImages/CorouselImage1.jpg'),
     },
     {
-      image: require('../../assets/images/CorouselImage2.jpg'),
+      image: require('../../assets/images/BannerImages/CorouselImage2.jpg'),
     },
     {
-      image: require('../../assets/images/CorouselImage3.jpg'),
+      image: require('../../assets/images/BannerImages/CorouselImage3.jpg'),
     },
     {
-      image: require('../../assets/images/CorouselImage4.jpg'),
+      image: require('../../assets/images/BannerImages/CorouselImage4.jpg'),
     },
   ];
   return (
@@ -37,7 +35,6 @@ export default ImageCarousal;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     backgroundColor: '#fff',
   },
   carouselContainer: {

@@ -134,7 +134,12 @@ exports.ResetPass = async (req, res) => {
     userOTP.password = password;
     userOTP.save();
     // TODO: Replace with token
-    const token = "Hereisyourtoken";
+    const token = jwt.sign({
+      email: email,
+      phone: phone,
+      userType: userOTP.userType,
+      id: userOTP._id
+    });
     return res.status(200).json({
       data: {token: token},
       message: "User saved successfully",

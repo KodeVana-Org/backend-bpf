@@ -9,7 +9,7 @@ exports.getYoutubeVideo = async (req, res) => {
           part: "snippet",
           channelId: process.env.CHANNEL_ID,
           key: process.env.YOUTUBE_API_KEY,
-          maxResults: 5, // Fetch the latest 50 videos
+          maxResults: 50, // Fetch the latest 50 videos
           order: "date", // Sort by date (latest first)
         },
       },
