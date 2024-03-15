@@ -51,7 +51,7 @@ exports.RegisterForm = async (req, res) => {
     if (existingOTP) {
       // Update existing OTP entry with new OTP
       existingOTP.otp = otp;
-      existingOTP.expiration = new Date(Date.now() + 5 * 60 * 1000);
+      existingOTP.expiration = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes in milliseconds
       existingOTP.createdAt = new Date();
       await existingOTP.save();
     } else {
@@ -60,7 +60,7 @@ exports.RegisterForm = async (req, res) => {
         email: email,
         phone: phoneNumberWithCountryCode,
         otp: otp,
-        expiration: new Date(Date.now() + 5 * 60 * 1000),
+        expiration: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes in milliseconds
         createdAt: new Date(),
       });
       await newOTP.save();
@@ -87,12 +87,6 @@ exports.RegisterForm = async (req, res) => {
 exports.VerifyOTP = async (req, res) => {
   try {
     const { emailPhone, otp, password } = req.body;
-    if (otp.length !== 4) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP must be 4 digits long",
-      });
-    }
 
     let email, phone;
     // Check if email or phone is provided
@@ -128,17 +122,7 @@ exports.VerifyOTP = async (req, res) => {
         message: "User already registerd",
       });
     }
-
     const otpData = await OTP.findOne(otpQury);
-    const currentTime = new Date();
-    if (currentTime > otpData.expiration) {
-      await OTP.deleteOne(otpQury);
-      return res.status(401).json({
-        success: false,
-        message: "OTP is expired",
-      });
-    }
-
     if (!otpData || otpData.otp !== otp) {
       return res.status(401).json({
         success: false,
@@ -161,7 +145,6 @@ exports.VerifyOTP = async (req, res) => {
     user.userID = userID;
 
     await user.save();
-    await OTP.deleteOne(otpQury);
 
     //token-generate
     let tokenPayload = {
@@ -231,7 +214,7 @@ exports.loginWithOtp = async (req, res) => {
     }
 
     const otp = Math.floor(1000 + Math.random() * 9000);
-    const otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpiration = new Date(Date.now() + 2 * 60 * 1000);
 
     if (verificationMethod === "email") {
       const htmlTemplate = renderEmailTemplate(email, otp);
@@ -286,15 +269,17 @@ exports.verifyOtpAndLogin = async (req, res) => {
 
     if (!userOTP || userOTP.otp !== otp || (!userOTP.email && !userOTP.phone)) {
       return res.status(400).json({ error: "Invalid OTP or email/phone" });
+      console.log("Wrong OTP");
     }
 
-    const otpValidityDuration = 5 * 60 * 1000;
+    const otpValidityDuration = 3 * 60 * 1000;
     const otpTimestamp = userOTP.createdAt.getTime();
     const currentTimestamp = Date.now();
 
     if (currentTimestamp - otpTimestamp > otpValidityDuration) {
       await User.updateOne({ _id: userOTP._id }, { $unset: { otp: 1 } });
       return res.status(404).json({ error: "OTP expired" });
+      console.log("OTP expired");
     }
 
     await User.updateOne({ _id: userOTP._id }, { $unset: { otp: 1 } });

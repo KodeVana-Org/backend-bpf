@@ -16,6 +16,7 @@ const constitutionRoute = require("./src/router/adminRoute/pdfRoute.js");
 // Middleware to log requests
 app.use(express.json());
 app.use(cors());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
@@ -36,6 +37,8 @@ app.use("/pdf", constitutionRoute);
 
 // Route
 app.get("/", (req, res) => {
+  console.log(process.env.YOUTUBE_API_KEY);
+  console.log(process.env.CHANNEL_ID);
   res.send("server is serving ...!");
 });
 

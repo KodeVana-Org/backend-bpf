@@ -5,13 +5,14 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "*" }));
 // Middleware to handle 404 error
 app.use((req, res, next) => {
   res.status(404).send("Sorry can't find check url!");
 });
-app.use("/", (req, res) => {
-  console.log("app is working fine");
-});
+app.use("/", (req, res)=> {
+  console.log("app is working fine")
+})
 connectToDatabase();
 // Start the server
 const server = app.listen(PORT, () => {
