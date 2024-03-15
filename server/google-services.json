@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "372779104279",
+    "project_id": "plucky-rarity-368019",
+    "storage_bucket": "plucky-rarity-368019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372779104279:android:4851ed3c355a0035e0c452",
+        "android_client_info": {
+          "package_name": "com.kodevana.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqKk4Vlq2cjx9KhBwri6ca1eOYHQ50HRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372779104279:android:b09c341695156362e0c452",
+        "android_client_info": {
+          "package_name": "com.my.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqKk4Vlq2cjx9KhBwri6ca1eOYHQ50HRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
